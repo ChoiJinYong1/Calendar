@@ -93,9 +93,9 @@
 			}
 			protected function month_Click(event:MouseEvent, id:int):void
 			{
-				ExternalInterface.call("console.log", "id:"+id);
-				ExternalInterface.call("console.log", "CalLevel:"+CalLevel);
-				ExternalInterface.call("console.log", "cal.selectedDate.month:"+cal.selectedDate.month);
+				//ExternalInterface.call("console.log", "id:"+id);
+				//ExternalInterface.call("console.log", "CalLevel:"+CalLevel);
+				//ExternalInterface.call("console.log", "cal.selectedDate.month:"+cal.selectedDate.month);
 				
 				cal.selectedDate.month = id - 1;
 				CalLevel = 3;
