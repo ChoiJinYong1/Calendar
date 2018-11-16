@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:DateChooser xmlns:mx="http://www.adobe.com/2006/mxml">
+	<mx:Script>
+		<![CDATA[
+			import mx.core.mx_internal;
+			import mx.core.UITextField;
+			
+			override protected function updateDisplayList(w:Number, h:Number):void
+			{
+				super.updateDisplayList(w, h);
+				
+				this.mx_internal::calHeader.visible = false;
+				this.mx_internal::backMonthButton.visible = false;
+				this.mx_internal::fwdMonthButton.visible = false;
+				this.mx_internal::monthDisplay.visible = false;
+				this.mx_internal::yearDisplay.visible = false;
+				
+				
+				
+				/*
+				// Now the dayBlocksArray has been filled. The Array looks as follows 
+				// dayBlocksArray["rows"]["columns] .... therefor [i][0 (zero)] will always get the dayNames (SMTWTFS) 
+				// Compare the dayNames with the set this.dayNames (which always start with sunday) and find the weekend days 
+				var colIndex:uint = 0; 
+				var rowIndex:uint = 1; // The first row (SMTWTFS) is handled seperately 
+				var currentColumn:Array; 
+				var dayName:UITextField; 
+				//var backgroundColor:uint = this.getStyle("dayNamesBackgroundColor"); 
+				var backgroundColor:uint = uint("0xECECEC");
+				var isWeekendCol:Boolean = false; 
+				var currentTextFormat:TextFormat; 
+				
+				// When the style is not found the default of white will be used. 
+				if (!backgroundColor) 
+				{ 
+					backgroundColor = 0xFFFFFF; 
+				} 
+				
+				for (colIndex; colIndex < 7; colIndex++) 
+				{ 
+					// First determine if the first item in this row (SMTWTFS) is a week/weekend day 
+					currentColumn = mx_internal::dateGrid.dayBlocksArray[colIndex]; 
+					dayName = currentColumn[0]; 
+					
+					// Determine if this is a weekend row 
+					// The dayNames array is fixed in the order of index 0 = sunday and index 6 = saturday. 
+					// Therefor check of the text value of the current dayName is equal to either of 
+					// those two. If it is we are dealing with a weekend column 
+					isWeekendCol = dayName.text == this.dayNames[0] || dayName.text == this.dayNames[6]; 
+					
+					if (isWeekendCol) 
+					{ 
+						// Set the color 
+						currentTextFormat = dayName.getTextFormat(); 
+						//currentTextFormat.color = getStyle("weekendHeaderColor"); 
+						currentTextFormat.color = uint("0xDDDDDD");
+						dayName.setTextFormat(currentTextFormat); 
+						
+						// Set the background color 
+						dayName.background = true; 
+						dayName.backgroundColor = backgroundColor; 
+					} 
+					else 
+					{ 
+						currentTextFormat = dayName.getTextFormat(); 
+						currentTextFormat.color = uint("0x444444"); 
+						dayName.setTextFormat(currentTextFormat); 
+						
+						// Set the background color 
+						dayName.background = true; 
+						dayName.backgroundColor = backgroundColor; 
+					} 
+					
+					// Reset the rowIndex 
+					rowIndex = 1; 
+					
+					// Now go through all the other rows of this column 
+					for (rowIndex; rowIndex < currentColumn.length; rowIndex++) 
+					{ 
+						dayName = currentColumn[rowIndex]; 
+						
+						if (isWeekendCol) 
+						{ 
+							dayName.setColor(uint("0xDDDDDD")); 
+						} 
+						else 
+						{ 
+							dayName.setColor(uint("0x00317F")); 
+						} 				
+					}
+				}
+				*/
+			}
+			
+			private function onTest(event:MouseEvent):void {
+				if(this.mx_internal::dateGrid.visible == false)
+					this.mx_internal::dateGrid.visible = true;	
+				else
+					this.mx_internal::dateGrid.visible = false;
+			}
+			
+		]]>
+	</mx:Script>
+	<mx:Button label="테스트" id="testbtn" click="onTest(event)" x="31" y="4" width="50" fillAlphas="[1.0, 1.0,1.0" />
+	
+	
+</mx:DateChooser>
