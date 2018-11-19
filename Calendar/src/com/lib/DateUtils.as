@@ -34,6 +34,8 @@
  
 package com.lib {
 
+	import flash.external.ExternalInterface;
+	
 	import mx.formatters.DateFormatter;
 
 	public class DateUtils {
@@ -256,7 +258,7 @@ package com.lib {
 		 */
 		public static function dateAdd( datePart:String, number:Number, date:Date ):Date {
 			var _returnDate:Date = new Date( date );
-		
+			ExternalInterface.call("console.log", datePart);
 			switch ( datePart ) {
 				case DateUtils.YEAR:
 				case DateUtils.MONTH:
@@ -273,6 +275,10 @@ package com.lib {
 				default:
 					/* Unknown date part, do nothing. */
 					break;
+			}
+			if( _returnDate.month - date.month == 2 ){
+				_returnDate.setDate(1);
+				_returnDate = DateUtils.dateAdd(DateUtils.DAY_OF_MONTH,-1,_returnDate);
 			}
 			return _returnDate;
 		}

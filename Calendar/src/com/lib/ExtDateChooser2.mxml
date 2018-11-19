@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="400" height="300"
+	xmlns:lib="com.lib.*" creationComplete="onCreationComplete(event)">
+	
+	
+	<mx:Script>
+		<![CDATA[
+			import com.lib.DateUtils;
+			
+			import mx.collections.ArrayCollection;
+			import mx.core.mx_internal;
+			import mx.events.FlexEvent;
+			
+			private var CalLevel:int;
+			private var tDate:Date = new Date();
+			private var stdYear:String = "";
+			[Bindable] private var yearArray:ArrayCollection = new ArrayCollection();
+			[Bindable] private var dayYN:Boolean = false;
+			[Bindable] private var monthYN:Boolean = false;
+			[Bindable] private var yearYN:Boolean = false;
+			
+			
+			protected function selectView_Click(event:MouseEvent):void
+			{
+				CalLevel += 1;
+				if(CalLevel > 3) 
+					CalLevel = 1;
+				if(CalLevel == 1){					
+					cal.mx_internal::dateGrid.visible = true;
+					yearYN = false;
+					monthYN = false;
+				} else if(CalLevel == 2){
+					cal.mx_internal::dateGrid.visible = false;
+					monthYN = true;
+					yearYN = false;
+				} else if(CalLevel == 3){
+					cal.mx_internal::dateGrid.visible = false;
+					yearYN = true;
+					monthYN = false;
+				}
+				calbtn_change();
+			}
+			
+			protected function up_click(event:MouseEvent):void
+			{
+				if(CalLevel == 1){					
+					cal.selectedDate = DateUtils.dateAdd(DateUtils.MONTH,1,cal.selectedDate);
+				} else if(CalLevel == 2){
+					cal.selectedDate = DateUtils.dateAdd(DateUtils.YEAR,1,cal.selectedDate);
+				} else if(CalLevel == 3){
+					cal.mx_internal::dateGrid.visible = false;
+					yearYN = true;
+					monthYN = false;
+					cal.selectedDate = DateUtils.dateAdd(DateUtils.YEAR,10,cal.selectedDate);
+					year_setting();
+				}
+				calbtn_change();
+			}
+			
+			protected function down_click(event:MouseEvent):void
+			{
+				
+				if(CalLevel == 1){					
+					cal.selectedDate = DateUtils.dateAdd(DateUtils.MONTH,-1,cal.selectedDate);
+				} else if(CalLevel == 2){
+					cal.selectedDate = DateUtils.dateAdd(DateUtils.YEAR,-1,cal.selectedDate);
+				} else if(CalLevel == 3){
+					cal.mx_internal::dateGrid.visible = false;
+					yearYN = true;
+					monthYN = false;
+					cal.selectedDate = DateUtils.dateAdd(DateUtils.YEAR,-10,cal.selectedDate);
+					year_setting();
+				}
+				calbtn_change();
+			}
+			
+			private function calbtn_change():void
+			{
+				if(CalLevel == 1){
+					calbtn.label = cal.selectedDate.fullYear.toString() + "년" + (cal.selectedDate.month+1).toString() + "월" ; 
+					calText.text = cal.selectedDate.fullYear.toString() + "년" + (cal.selectedDate.month+1).toString() + "월" + cal.selectedDate.date.toString() + "일";
+				} else if(CalLevel == 2){
+					calbtn.label = cal.selectedDate.fullYear.toString() + "년";
+					calText.text = cal.selectedDate.fullYear.toString() + "년" + (cal.selectedDate.month+1).toString() + "월" ;
+				} else if(CalLevel == 3){
+					calbtn.label = stdYear;
+					calText.text = stdYear;
+				}
+				
+			}
+			
+			private function year_setting():void
+			{
+				var yDate:Date = new Date();
+				yDate.setFullYear(int(cal.selectedDate.fullYear.toString().substr(0,3) + "0"));
+				
+				DateUtils.dateAdd("year",1,yDate);
+				stdYear = "";
+				yearArray = new ArrayCollection();
+				for (var ii:int = 0 ; ii <12 ; ii ++){
+					if(ii==0){ 
+						stdYear += DateUtils.dateAdd(DateUtils.YEAR,ii,yDate).fullYear.toString() + "년";
+					}
+					if(ii==11){
+						stdYear += " ~ " + DateUtils.dateAdd(DateUtils.YEAR,ii,yDate).fullYear.toString() + "년";
+					}
+					
+					yearArray.addItem({id:ii,data:DateUtils.dateAdd(DateUtils.YEAR,ii,yDate).fullYear});
+				}
+			}
+			
+			protected function onCreationComplete(event:FlexEvent):void
+			{
+				//cal.mx_internal::calHeader.visible = false;
+				cal.mx_internal::backMonthButton.visible = false;
+				cal.mx_internal::fwdMonthButton.visible = false;
+				cal.mx_internal::yearDisplay.visible = false;
+				cal.mx_internal::monthDisplay.visible = false;
+				//cal.mx_internal::removeMonthDisplay();
+				//cal.mx_internal::removeYearDisplay();
+				
+				cal.selectedDate = tDate;
+				CalLevel = 1 ; // Level1:일달력 , Level2:월달력, Level3:년달력
+				dayYN = true;			
+				canvas.visible = false;
+				year_setting();
+				calbtn_change();
+			}
+			protected function Mouse_Over(event:MouseEvent):void
+			{	
+				event.currentTarget..getTxt().background = true;
+				event.currentTarget..getTxt().backgroundColor = "0xB2E1FF";	
+			}
+			
+			protected function Mouse_Out(event:MouseEvent):void
+			{
+				event.currentTarget..getTxt().background = false;
+			}
+			
+			protected function month_Click(event:MouseEvent):void
+			{	
+				var tempDate:Date = cal.selectedDate;
+				
+				tempDate.setMonth(int(event.currentTarget.text.replace("월","")-1));
+				cal.selectedDate = tempDate;
+				
+				CalLevel = 3;
+				selectView_Click(event);
+			}
+			
+			protected function year_Click(event:MouseEvent):void
+			{	
+				var tempDate:Date = cal.selectedDate;
+				tempDate.setFullYear(int(event.currentTarget.text.replace("년","")));
+				cal.selectedDate = tempDate;
+				CalLevel = 1;
+				selectView_Click(event);
+			}
+			
+			protected function cal_click(event:MouseEvent):void
+			{
+				calbtn_change();
+			}
+			
+			protected function df_Click(event:MouseEvent):void
+			{
+				if(canvas.visible)
+					canvas.visible = false;
+				else
+					canvas.visible = true;
+						
+			}
+			
+		]]>
+	</mx:Script>
+	<mx:DateField click="df_Click(event)" />
+	<mx:Canvas id="canvas" x="77" y="0">
+		
+	
+		<mx:DateChooser id="cal" name="cal" width="300" height="190" click="cal_click(event)" />
+		<mx:VBox id="monthCal" x="20" y="34" width="260" visible="{monthYN}" includeInLayout="{monthYN}">
+			<mx:HBox width="100%" height="{cal.height * 0.25}" verticalAlign="middle" horizontalAlign="center">
+				<lib:ExtLabel id="month1" text="1월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center" />
+				<lib:ExtLabel id="month2" text="2월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center" />
+				<lib:ExtLabel id="month3" text="3월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center" />
+				<lib:ExtLabel id="month4" text="4월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center" />
+			</mx:HBox>
+			<mx:HBox width="100%" height="{cal.height * 0.25}" verticalAlign="middle" horizontalAlign="center">
+				<lib:ExtLabel id="month5" text="5월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center" />
+				<lib:ExtLabel id="month6" text="6월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center" />
+				<lib:ExtLabel id="month7" text="7월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center" />
+				<lib:ExtLabel id="month8" text="8월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center" />
+			</mx:HBox>
+			<mx:HBox width="100%" height="{cal.height * 0.25}" verticalAlign="middle" horizontalAlign="center">
+				<lib:ExtLabel id="month9" text="9월" width="25%" click="month_Click(event)"  mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center" />
+				<lib:ExtLabel id="month10" text="10월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center" />
+				<lib:ExtLabel id="month11" text="11월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center" />
+				<lib:ExtLabel id="month12" text="12월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center" />
+			</mx:HBox>
+		</mx:VBox>
+		
+		<mx:VBox id="yearCal" x="20" y="34" width="260" visible="{yearYN}" includeInLayout="{yearYN}">
+			<mx:HBox width="100%" height="{cal.height * 0.25}" verticalAlign="middle" horizontalAlign="center">
+				<lib:ExtLabel text="{yearArray.getItemAt(0).data}년" width="25%" id="year0" click="year_Click(event)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center" />
+				<lib:ExtLabel text="{yearArray.getItemAt(1).data}년" width="25%" id="year1" click="year_Click(event)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center" />
+				<lib:ExtLabel text="{yearArray.getItemAt(2).data}년" width="25%" id="year2" click="year_Click(event)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center" />
+				<lib:ExtLabel text="{yearArray.getItemAt(3).data}년" width="25%" id="year3" click="year_Click(event)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center" />
+			</mx:HBox>
+			<mx:HBox width="100%" height="{cal.height * 0.25}" verticalAlign="middle" horizontalAlign="center">
+				<lib:ExtLabel text="{yearArray.getItemAt(4).data}년" width="25%" id="year4" click="year_Click(event)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center" />
+				<lib:ExtLabel text="{yearArray.getItemAt(5).data}년" width="25%" id="year5" click="year_Click(event)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center" />
+				<lib:ExtLabel text="{yearArray.getItemAt(6).data}년" width="25%" id="year6" click="year_Click(event)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center" />
+				<lib:ExtLabel text="{yearArray.getItemAt(7).data}년" width="25%" id="year7" click="year_Click(event)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center" />
+			</mx:HBox>
+			<mx:HBox width="100%" height="{cal.height * 0.25}" verticalAlign="middle" horizontalAlign="center">
+				<lib:ExtLabel text="{yearArray.getItemAt(8).data}년" width="25%" id="year8" click="year_Click(event)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center" />
+				<lib:ExtLabel text="{yearArray.getItemAt(9).data}년" width="25%" id="year9" click="year_Click(event)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center" />
+				<lib:ExtLabel text="{yearArray.getItemAt(10).data}년" width="25%" id="year10" click="year_Click(event)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center" />
+				<lib:ExtLabel text="{yearArray.getItemAt(11).data}년" width="25%" id="year11" click="year_Click(event)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center" />
+			</mx:HBox>
+		</mx:VBox>
+		
+		<mx:Button id="calbtn" x="20" y="4" width="150" fillAlphas="[1.0, 1.0, 1.0, 1.0]" click="selectView_Click(event)" />
+		<mx:Button id="upbtn" x="180" y="4" width="60" fillAlphas="[1.0, 1.0, 1.0, 1.0]" click="up_click(event)" label="△"/>
+		<mx:Button id="downbtn" x="240" y="4" width="60" fillAlphas="[1.0, 1.0, 1.0, 1.0]" click="down_click(event)" label="▽" />
+	</mx:Canvas>
+	
+	<mx:Panel x="0" y="200" width="300" visible="false" includeInLayout="false">
+		<mx:Label id="calText" width="100%"/>
+	</mx:Panel>
+</mx:Canvas>

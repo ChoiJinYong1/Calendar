@@ -101,7 +101,7 @@
 			
 		]]>
 	</mx:Script>
-	<mx:Button label="테스트" id="testbtn" click="onTest(event)" x="31" y="4" width="50" fillAlphas="[1.0, 1.0,1.0" />
+	<mx:Button label="테스트" id="testbtn" click="onTest(event)" x="31" y="4" width="50" fillAlphas="[1.0, 1.0, 1.0, 1.0]" />
 	
 	
 </mx:DateChooser>
