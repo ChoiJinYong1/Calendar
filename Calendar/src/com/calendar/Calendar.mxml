@@ -8,11 +8,14 @@
 			
 			import flash.external.ExternalInterface;
 			
+			import mx.collections.ArrayCollection;
 			import mx.core.mx_internal;
 			import mx.events.FlexEvent;
 			
 			private var CalLevel:int;
 			private var tDate:Date = new Date();
+			private var stdYear:String = "";
+			[Bindable] private var yearArray:ArrayCollection = new ArrayCollection();
 			[Bindable] private var dayYN:Boolean = false;
 			[Bindable] private var monthYN:Boolean = false;
 			[Bindable] private var yearYN:Boolean = false;
@@ -20,8 +23,9 @@
 			
 			
 			
+			
 			protected function month_click(event:MouseEvent):void
-			{				
+			{
 				CalLevel += 1;
 				if(CalLevel > 3) 
 					CalLevel = 1;
@@ -52,6 +56,8 @@
 					cal.mx_internal::dateGrid.visible = false;
 					yearYN = true;
 					monthYN = false;
+					cal.selectedDate = DateUtils.dateAdd(DateUtils.YEAR,10,cal.selectedDate);
+					year_setting();
 				}
 				calbtn_change();
 			}
@@ -67,6 +73,8 @@
 					cal.mx_internal::dateGrid.visible = false;
 					yearYN = true;
 					monthYN = false;
+					cal.selectedDate = DateUtils.dateAdd(DateUtils.YEAR,-10,cal.selectedDate);
+					year_setting();
 				}
 				calbtn_change();
 			}
@@ -80,101 +88,74 @@
 					calbtn.label = cal.selectedDate.fullYear.toString() + "년";
 					calText.text = cal.selectedDate.fullYear.toString() + "년" + (cal.selectedDate.month+1).toString() + "월" ;
 				} else if(CalLevel == 3){
-					
+					calbtn.label = stdYear;
+					calText.text = stdYear;
 				}
+			}
+			
+			private function year_setting():void
+			{
+				var yDate:Date = cal.selectedDate;
+				
+				yDate.setFullYear(int(cal.selectedDate.fullYear.toString().substr(0,3) + "0"));
+				ExternalInterface.call("console.log", cal.selectedDate.fullYear.toString() + "년" + (cal.selectedDate.month+1).toString() + "월" + cal.selectedDate.date.toString() + "일");
+				ExternalInterface.call("console.log", yDate.fullYear.toString() + "년" + (yDate.month+1).toString() + "월" + yDate.date.toString() + "일");
+				
+				DateUtils.dateAdd("year",1,yDate);
+				stdYear = "";
+				yearArray = new ArrayCollection();
+				for (var ii:int = 0 ; ii <12 ; ii ++){
+					if(ii==0){ 
+						stdYear += DateUtils.dateAdd('fullYear',ii,yDate).fullYear.toString() + "년";
+					}
+					if(ii==11){
+						stdYear += " ~ " + DateUtils.dateAdd('fullYear',ii,yDate).fullYear.toString() + "년";
+						//ExternalInterface.call("console.log", yDate.fullYear.toString() + "년" + (yDate.month+1).toString() + "월" + yDate.date.toString() + "일");
+					}
+					
+					ExternalInterface.call("console.log", ii.toString() + "." + DateUtils.dateAdd("fullYear",ii,yDate).fullYear);
+					yearArray.addItem({id:ii,data:DateUtils.dateAdd("fullYear",ii,yDate).fullYear});
+				}
+				
 			}
 			
 			protected function onCreationComplete(event:FlexEvent):void
 			{
 				cal.selectedDate = tDate;
 				CalLevel = 1 ; // Level1:일달력 , Level2:월달력, Level3:년달력
-				dayYN = true;
+				dayYN = true;				
+				year_setting();
 				calbtn_change();
-			}
-			protected function month_Click(event:MouseEvent, id:int):void
-			{
-				//ExternalInterface.call("console.log", "id:"+id);
-				//ExternalInterface.call("console.log", "CalLevel:"+CalLevel);
-				//ExternalInterface.call("console.log", "cal.selectedDate.month:"+cal.selectedDate.month);
 				
+				
+			}
+			protected function Mouse_Over(event:MouseEvent):void
+			{	
+				event.currentTarget..getTxt().background = true;
+				event.currentTarget..getTxt().backgroundColor = "0xB2E1FF";	
+			}
+			
+			protected function Mouse_Out(event:MouseEvent):void
+			{
+				event.currentTarget..getTxt().background = false;
+			}
+			
+			protected function month_Click(event:MouseEvent, id:int):void
+			{	
 				cal.selectedDate.month = id - 1;
 				CalLevel = 3;
 				month_click(event);
 				
 			}
 			
-			protected function month_Over(event:MouseEvent, id:int):void
-			{
-				if(id == 1){
-					month1.getTxt()
-					month1.getTxt().background = true;
-					month1.getTxt().backgroundColor = "0xBC003A";
-				} else if(id == 2){					
-					month2.getTxt().background = true;
-					month2.getTxt().backgroundColor = "0xBC003A";
-				} else if(id == 3){					
-					month3.getTxt().background = true;
-					month3.getTxt().backgroundColor = "0xBC003A";
-				} else if(id == 4){					
-					month4.getTxt().background = true;
-					month4.getTxt().backgroundColor = "0xBC003A";
-				} else if(id == 5){					
-					month5.getTxt().background = true;
-					month5.getTxt().backgroundColor = "0xBC003A";
-				} else if(id == 6){					
-					month6.getTxt().background = true;
-					month6.getTxt().backgroundColor = "0xBC003A";
-				} else if(id == 7){					
-					month7.getTxt().background = true;
-					month7.getTxt().backgroundColor = "0xBC003A";
-				} else if(id == 8){					
-					month8.getTxt().background = true;
-					month8.getTxt().backgroundColor = "0xBC003A";
-				} else if(id == 9){					
-					month9.getTxt().background = true;
-					month9.getTxt().backgroundColor = "0xBC003A";
-				} else if(id == 10){					
-					month10.getTxt().background = true;
-					month10.getTxt().backgroundColor = "0xBC003A";
-				} else if(id == 11){					
-					month11.getTxt().background = true;
-					month11.getTxt().backgroundColor = "0xBC003A";
-				} else if(id == 12){					
-					month12.getTxt().background = true;
-					month12.getTxt().backgroundColor = "0xBC003A";
-				} 
+			protected function year_Click(event:MouseEvent, id:int):void
+			{					
 				
-				
-			}
-			protected function month_Out(event:MouseEvent, id:int):void
-			{
-				if(id == 1) {
-					month1.getTxt().background = false;
-				} else if(id == 2) {
-					month2.getTxt().background = false;
-				} else if(id == 3) {
-					month3.getTxt().background = false;
-				} else if(id == 4) {
-					month4.getTxt().background = false;
-				} else if(id == 5) {
-					month5.getTxt().background = false;
-				} else if(id == 6) {
-					month6.getTxt().background = false;
-				} else if(id == 7) {
-					month7.getTxt().background = false;
-				} else if(id == 8) {
-					month8.getTxt().background = false;
-				} else if(id == 9) {
-					month9.getTxt().background = false;
-				} else if(id == 10) {
-					month10.getTxt().background = false;
-				} else if(id == 11) {
-					month11.getTxt().background = false;
-				} else if(id == 12) {
-					month12.getTxt().background = false;
-				}
-				
-				
+				//ExternalInterface.call("console.log", event.currentTarget..text);
+				//cal.selectedDate.setFullYear(int(event.currentTarget..text) );
+				cal.selectedDate.setFullYear(int((stdYear + id.toString())));
+				CalLevel = 1;
+				month_click(event);
 			}
 			
 			protected function cal_click(event:MouseEvent):void
@@ -184,62 +165,101 @@
 			
 			protected function onTest(event:MouseEvent):void
 			{				
-				ExternalInterface.call("console.log", "Over");
-				month1.mx_internal::overlayColor = uint("0xBC003A");
+				var targetID:String = event.target.id;
+				ExternalInterface.call("console.log", "Start");
+				ExternalInterface.call("console.log",targetID);
+				ExternalInterface.call("console.log", "End");
 			}
+			
+			
+			protected function test_Click(event:MouseEvent):void
+			{	
+				var targetID:String = event.target.id;
+				//var target:Object = event.target.id;
+				ExternalInterface.call("console.log", "Start");
+				//ExternalInterface.call("console.log", target.mx_internal::);
+				//trace(target);
+				//targetID = (target as ExtLabel).id;
+				ExternalInterface.call("console.log",targetID);
+				//ExternalInterface.call("console.log",event );
+				ExternalInterface.call("console.log", "End");
+			}
+			
+			protected function labeltest(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				
+				//var targetID:String = event.target.id;
+				ExternalInterface.call("console.log", "Start");
+				
+				//ExternalInterface.call("console.log",target);
+				//ExternalInterface.call("console.log",event );
+				ExternalInterface.call("console.log", "End");
+			}
+			
+			private function setTestLabel(event:MouseEvent):void{
+				
+				ExternalInterface.call("console.log", "Start");
+				ExternalInterface.call("console.log", event.currentTarget.text );
+				ExternalInterface.call("console.log", "End");
+			}
+			
 		]]>
 	</mx:Script>
 	
 	
 	<lib:ExtDateChooser id="cal" name="cal" width="300" height="190" click="cal_click(event)" />	
-	<mx:VBox id="monthCal" x="20" y="34" width="280" visible="{monthYN}" includeInLayout="{monthYN}">
-		<mx:HBox width="100%" height="{cal.height * 0.25}">
-			<lib:ExtLabel id="month1" text="1월" width="25%" click="month_Click(event,1)" mouseOver="month_Over(event,1)"  mouseOut="month_Out(event,1)"/>
-			<lib:ExtLabel id="month2" text="2월" width="25%" click="month_Click(event,2)" mouseOver="month_Over(event,2)"  mouseOut="month_Out(event,2)"/>
-			<lib:ExtLabel id="month3" text="3월" width="25%" click="month_Click(event,3)" mouseOver="month_Over(event,3)"  mouseOut="month_Out(event,3)"/>
-			<lib:ExtLabel id="month4" text="4월" width="25%" click="month_Click(event,4)" mouseOver="month_Over(event,4)"  mouseOut="month_Out(event,4)"/>
+	<mx:VBox id="monthCal" x="20" y="34" width="260" visible="{monthYN}" includeInLayout="{monthYN}">
+		<mx:HBox width="100%" height="{cal.height * 0.25}" verticalAlign="middle" horizontalAlign="center">
+			<lib:ExtLabel id="month1" text="1월" width="25%" click="month_Click(event,1)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center" />
+			<lib:ExtLabel id="month2" text="2월" width="25%" click="month_Click(event,2)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center" />
+			<lib:ExtLabel id="month3" text="3월" width="25%" click="month_Click(event,3)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center" />
+			<lib:ExtLabel id="month4" text="4월" width="25%" click="month_Click(event,4)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center" />
 		</mx:HBox>
-		<mx:HBox width="100%" height="{cal.height * 0.25}">
-			<lib:ExtLabel id="month5" text="5월" width="25%" click="month_Click(event,5)" mouseOver="month_Over(event,5)"  mouseOut="month_Out(event,5)"/>
-			<lib:ExtLabel id="month6" text="6월" width="25%" click="month_Click(event,6)" mouseOver="month_Over(event,6)"  mouseOut="month_Out(event,6)"/>
-			<lib:ExtLabel id="month7" text="7월" width="25%" click="month_Click(event,7)" mouseOver="month_Over(event,7)"  mouseOut="month_Out(event,7)"/>
-			<lib:ExtLabel id="month8" text="8월" width="25%" click="month_Click(event,8)" mouseOver="month_Over(event,8)"  mouseOut="month_Out(event,8)"/>
+		<mx:HBox width="100%" height="{cal.height * 0.25}" verticalAlign="middle" horizontalAlign="center">
+			<lib:ExtLabel id="month5" text="5월" width="25%" click="month_Click(event,5)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center" />
+			<lib:ExtLabel id="month6" text="6월" width="25%" click="month_Click(event,6)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center" />
+			<lib:ExtLabel id="month7" text="7월" width="25%" click="month_Click(event,7)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center" />
+			<lib:ExtLabel id="month8" text="8월" width="25%" click="month_Click(event,8)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center" />
 		</mx:HBox>
-		<mx:HBox width="100%" height="{cal.height * 0.25}">
-			<lib:ExtLabel id="month9" text="9월" width="25%" click="month_Click(event,9)" mouseOver="month_Over(event,9)"  mouseOut="month_Out(event,9)"/>
-			<lib:ExtLabel id="month10" text="10월" width="25%" click="month_Click(event,10)" mouseOver="month_Over(event,10)"  mouseOut="month_Out(event,10)"/>
-			<lib:ExtLabel id="month11" text="11월" width="25%" click="month_Click(event,11)" mouseOver="month_Over(event,11)"  mouseOut="month_Out(event,11)"/>
-			<lib:ExtLabel id="month12" text="12월" width="25%" click="month_Click(event,12)" mouseOver="month_Over(event,12)"  mouseOut="month_Out(event,12)"/>
-		</mx:HBox>
-	</mx:VBox>
-	
-	<mx:VBox id="yearCal" x="20" y="34" width="280" visible="{yearYN}" includeInLayout="{yearYN}">
-		<mx:HBox width="100%">
-			<mx:Label text="2001년" width="25%" height="{cal.height * 0.25}" />
-			<mx:Label text="2002년" width="25%" height="{cal.height * 0.25}" />
-			<mx:Label text="2003년" width="25%" height="{cal.height * 0.25}" />
-			<mx:Label text="2004년" width="25%" height="{cal.height * 0.25}" />
-		</mx:HBox>
-		<mx:HBox width="100%">
-			<mx:Label text="2005년" width="25%" height="{cal.height * 0.25}" />
-			<mx:Label text="2006년" width="25%" height="{cal.height * 0.25}" />
-			<mx:Label text="2007년" width="25%" height="{cal.height * 0.25}" />
-			<mx:Label text="2008년" width="25%" height="{cal.height * 0.25}" />
-		</mx:HBox>
-		<mx:HBox width="100%">
-			<mx:Label text="2009년" width="25%" height="{cal.height * 0.25}" />
-			<mx:Label text="2010년" width="25%" height="{cal.height * 0.25}" />
-			<mx:Label text="2011년" width="25%" height="{cal.height * 0.25}" />
-			<mx:Label text="2012년" width="25%" height="{cal.height * 0.25}" />
+		<mx:HBox width="100%" height="{cal.height * 0.25}" verticalAlign="middle" horizontalAlign="center">
+			<lib:ExtLabel id="month9" text="9월" width="25%" click="month_Click(event,9)"  mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center" />
+			<lib:ExtLabel id="month10" text="10월" width="25%" click="month_Click(event,10)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center" />
+			<lib:ExtLabel id="month11" text="11월" width="25%" click="month_Click(event,11)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center" />
+			<lib:ExtLabel id="month12" text="12월" width="25%" click="month_Click(event,12)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center" />
 		</mx:HBox>
 	</mx:VBox>
 	
-	<mx:Button id="calbtn" x="20" y="4" width="100" fillAlphas="[1.0, 1.0, 1.0, 1.0]" click="month_click(event)" />
+	<mx:VBox id="yearCal" x="20" y="34" width="260" visible="{yearYN}" includeInLayout="{yearYN}">
+		<mx:HBox width="100%" height="{cal.height * 0.25}" verticalAlign="middle" horizontalAlign="center">				
+			<lib:ExtLabel text="{yearArray.getItemAt(0).data}년" width="25%" id="year0" click="year_Click(event,0)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center" />
+			<lib:ExtLabel text="{yearArray.getItemAt(1).data}년" width="25%" id="year1" click="year_Click(event,1)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center" />
+			<lib:ExtLabel text="{yearArray.getItemAt(2).data}년" width="25%" id="year2" click="year_Click(event,2)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center" />
+			<lib:ExtLabel text="{yearArray.getItemAt(3).data}년" width="25%" id="year3" click="year_Click(event,3)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center" />
+		</mx:HBox>
+		<mx:HBox width="100%" height="{cal.height * 0.25}" verticalAlign="middle" horizontalAlign="center">
+			<lib:ExtLabel text="{yearArray.getItemAt(4).data}년" width="25%" id="year4" click="year_Click(event,4)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center" />
+			<lib:ExtLabel text="{yearArray.getItemAt(5).data}년" width="25%" id="year5" click="year_Click(event,5)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center" />
+			<lib:ExtLabel text="{yearArray.getItemAt(6).data}년" width="25%" id="year6" click="year_Click(event,6)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center" />
+			<lib:ExtLabel text="{yearArray.getItemAt(7).data}년" width="25%" id="year7" click="year_Click(event,7)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center" />
+		</mx:HBox>
+		<mx:HBox width="100%" height="{cal.height * 0.25}" verticalAlign="middle" horizontalAlign="center">
+			<lib:ExtLabel text="{yearArray.getItemAt(8).data}년" width="25%" id="year8" click="year_Click(event,8)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center" />
+			<lib:ExtLabel text="{yearArray.getItemAt(9).data}년" width="25%" id="year9" click="year_Click(event,9)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center" />
+			<lib:ExtLabel text="{yearArray.getItemAt(10).data}년" width="25%" id="year10" click="year_Click(event,10)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center" />
+			<lib:ExtLabel text="{yearArray.getItemAt(11).data}년" width="25%" id="year11" click="year_Click(event,11)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center" />
+		</mx:HBox>
+	</mx:VBox>
+	
+	<mx:Button id="calbtn" x="20" y="4" width="130" fillAlphas="[1.0, 1.0, 1.0, 1.0]" click="month_click(event)" />
 	<mx:Button id="upbtn" x="180" y="4" width="50" fillAlphas="[1.0, 1.0, 1.0, 1.0]" click="up_click(event)" label="△"/>
 	<mx:Button id="downbtn" x="240" y="4" width="50" fillAlphas="[1.0, 1.0, 1.0, 1.0]" click="down_click(event)" label="▽" />
 	<mx:Panel x="0" y="200">
 		<mx:Button id="testbtn" click="onTest(event)" label="테스트"/>
 		<mx:Label id="calText" />
+		<mx:Label id="testText" />
+		<lib:ExtLabel  id="test1" text="테스트!!!!" click="labeltest(event)" />
+		<lib:ExtLabel  id="test2" text="테스트!!!!" click="labeltest(event)" />
+		<lib:ExtLabel  id="test3" text="테스트!!!!" click="labeltest(event)" />
 	</mx:Panel>
-
 </mx:Application>
