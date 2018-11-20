@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="400" height="300"
-	xmlns:lib="com.lib.*" creationComplete="onCreationComplete(event)">
+		   xmlns:lib="com.lib.*" creationComplete="onCreationComplete(event)">
 	
 	
 	<mx:Script>
 		<![CDATA[
 			import com.lib.DateUtils;
 			
+			import flash.external.ExternalInterface;
+			
 			import mx.collections.ArrayCollection;
 			import mx.core.mx_internal;
+			import mx.events.DropdownEvent;
 			import mx.events.FlexEvent;
 			
 			private var CalLevel:int;
 			private var tDate:Date = new Date();
 			private var stdYear:String = "";
+			private var isNew:Boolean = false;
 			[Bindable] private var yearArray:ArrayCollection = new ArrayCollection();
 			[Bindable] private var dayYN:Boolean = false;
 			[Bindable] private var monthYN:Boolean = false;
@@ -86,7 +90,7 @@
 					calbtn.label = stdYear;
 					calText.text = stdYear;
 				}
-				
+				df.selectedDate = cal.selectedDate;
 			}
 			
 			private function year_setting():void
@@ -111,13 +115,11 @@
 			
 			protected function onCreationComplete(event:FlexEvent):void
 			{
-				//cal.mx_internal::calHeader.visible = false;
 				cal.mx_internal::backMonthButton.visible = false;
 				cal.mx_internal::fwdMonthButton.visible = false;
 				cal.mx_internal::yearDisplay.visible = false;
 				cal.mx_internal::monthDisplay.visible = false;
-				//cal.mx_internal::removeMonthDisplay();
-				//cal.mx_internal::removeYearDisplay();
+				df.mx_internal::showingDropdown = false;
 				
 				cal.selectedDate = tDate;
 				CalLevel = 1 ; // Level1:일달력 , Level2:월달력, Level3:년달력
@@ -160,6 +162,11 @@
 			protected function cal_click(event:MouseEvent):void
 			{
 				calbtn_change();
+				if(canvas.visible)
+					canvas.visible = false;
+				else
+					canvas.visible = true;
+				
 			}
 			
 			protected function df_Click(event:MouseEvent):void
@@ -168,15 +175,40 @@
 					canvas.visible = false;
 				else
 					canvas.visible = true;
-						
+				
+			}
+			
+			protected function df_openHandler(event:DropdownEvent):void
+			{
+				CalLevel = 1;
+				
+				if(canvas.visible)
+					canvas.visible = false;
+				else
+					canvas.visible = true;
+			}
+			
+			protected function df_closeHandler(event:DropdownEvent):void
+			{
+				if(!isNew){
+					isNew = true;
+				} else {
+					CalLevel = 1;
+					if(canvas.visible)
+						canvas.visible = false;
+					else
+						canvas.visible = true;	
+				}
+				
+				
 			}
 			
 		]]>
 	</mx:Script>
-	<mx:DateField click="df_Click(event)" />
-	<mx:Canvas id="canvas" x="77" y="0">
+	<lib:ExtDateField id="df" open="df_openHandler(event)"  close="df_closeHandler(event)" />
+	<mx:Canvas id="canvas" x="90" y="0">
 		
-	
+		
 		<mx:DateChooser id="cal" name="cal" width="300" height="190" click="cal_click(event)" />
 		<mx:VBox id="monthCal" x="20" y="34" width="260" visible="{monthYN}" includeInLayout="{monthYN}">
 			<mx:HBox width="100%" height="{cal.height * 0.25}" verticalAlign="middle" horizontalAlign="center">

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:DateField xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="creationCompleteHandler(event)" formatString="YYYY-MM-DD" open="openHandler(event)">
+	<mx:Script>
+		<![CDATA[
+			import mx.events.DropdownEvent;
+			import mx.events.FlexEvent;
+			
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				// TODO Auto-generated method stub
+				this.dropdown.visible = false;
+				this.dropdown.includeInLayout = false;
+			}
+			
+			protected function openHandler(event:DropdownEvent):void
+			{
+				this.dropdown.visible = false;
+				this.dropdown.includeInLayout = false;
+			}
+			
+		]]>
+	</mx:Script>
+	
+</mx:DateField>
