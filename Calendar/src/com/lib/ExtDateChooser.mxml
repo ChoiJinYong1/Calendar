@@ -1,23 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:DateChooser xmlns:mx="http://www.adobe.com/2006/mxml">
+<mx:DateChooser xmlns:mx="http://www.adobe.com/2006/mxml" dayNames="['일','월','화','수','목','금','토']" fontWeight="bold" fontSize="12">
 	<mx:Script>
 		<![CDATA[
-			import mx.core.mx_internal;
+			import mx.core.UIComponentGlobals;
 			import mx.core.UITextField;
+			import mx.core.mx_internal;
 			
 			override protected function updateDisplayList(w:Number, h:Number):void
 			{
 				super.updateDisplayList(w, h);
 				
-				this.mx_internal::calHeader.visible = false;
-				this.mx_internal::backMonthButton.visible = false;
-				this.mx_internal::fwdMonthButton.visible = false;
-				this.mx_internal::monthDisplay.visible = false;
-				this.mx_internal::yearDisplay.visible = false;
 				
 				
 				
-				/*
 				// Now the dayBlocksArray has been filled. The Array looks as follows 
 				// dayBlocksArray["rows"]["columns] .... therefor [i][0 (zero)] will always get the dayNames (SMTWTFS) 
 				// Compare the dayNames with the set this.dayNames (which always start with sunday) and find the weekend days 
@@ -26,20 +21,27 @@
 				var currentColumn:Array; 
 				var dayName:UITextField; 
 				//var backgroundColor:uint = this.getStyle("dayNamesBackgroundColor"); 
-				var backgroundColor:uint = uint("0xECECEC");
+				var backgroundColor:uint = uint("0xececec");
 				var isWeekendCol:Boolean = false; 
 				var currentTextFormat:TextFormat; 
 				
 				// When the style is not found the default of white will be used. 
+				
+				
 				if (!backgroundColor) 
 				{ 
 					backgroundColor = 0xFFFFFF; 
 				} 
 				
+				
+				
 				for (colIndex; colIndex < 7; colIndex++) 
-				{ 
-					// First determine if the first item in this row (SMTWTFS) is a week/weekend day 
-					currentColumn = mx_internal::dateGrid.dayBlocksArray[colIndex]; 
+				{ 	
+					
+					// First determine if the first item in this row (SMTWTFS) is a week/weekend day
+					
+					currentColumn = mx_internal::dateGrid.mx_internal::dayBlocksArray[colIndex]; 
+					
 					dayName = currentColumn[0]; 
 					
 					// Determine if this is a weekend row 
@@ -47,30 +49,58 @@
 					// Therefor check of the text value of the current dayName is equal to either of 
 					// those two. If it is we are dealing with a weekend column 
 					isWeekendCol = dayName.text == this.dayNames[0] || dayName.text == this.dayNames[6]; 
-					
-					if (isWeekendCol) 
-					{ 
-						// Set the color 
-						currentTextFormat = dayName.getTextFormat(); 
-						//currentTextFormat.color = getStyle("weekendHeaderColor"); 
-						currentTextFormat.color = uint("0xDDDDDD");
+					if(colIndex == 0){
+						currentTextFormat = dayName.getTextFormat();
+						currentTextFormat.color = uint("0xE60012");
 						dayName.setTextFormat(currentTextFormat); 
 						
 						// Set the background color 
 						dayName.background = true; 
 						dayName.backgroundColor = backgroundColor; 
+					} else if(colIndex == 6) {
+						
+						currentTextFormat = dayName.getTextFormat();
+						currentTextFormat.color = uint("0x0078D7");
+						dayName.setTextFormat(currentTextFormat); 
+						
+						// Set the background color 
+						dayName.background = true; 
+						dayName.backgroundColor = backgroundColor; 
+					} else {
+						currentTextFormat = dayName.getTextFormat();
+						currentTextFormat.color = uint("0x0A0909");
+						dayName.setTextFormat(currentTextFormat); 
+						
+						// Set the background color 
+						dayName.background = true; 
+						dayName.backgroundColor = backgroundColor; 						
+					}
+					
+					/*
+					if (isWeekendCol) 
+					{ 
+					// Set the color 
+					
+					//currentTextFormat.color = getStyle("weekendHeaderColor"); 
+					currentTextFormat = dayName.getTextFormat();
+					currentTextFormat.color = uint("0xdddddd");
+					dayName.setTextFormat(currentTextFormat); 
+					
+					// Set the background color 
+					dayName.background = true; 
+					dayName.backgroundColor = backgroundColor; 
 					} 
 					else 
 					{ 
-						currentTextFormat = dayName.getTextFormat(); 
-						currentTextFormat.color = uint("0x444444"); 
-						dayName.setTextFormat(currentTextFormat); 
-						
-						// Set the background color 
-						dayName.background = true; 
-						dayName.backgroundColor = backgroundColor; 
-					} 
+					currentTextFormat = dayName.getTextFormat(); 
+					currentTextFormat.color = uint("0x444444"); 
+					dayName.setTextFormat(currentTextFormat); 
 					
+					// Set the background color 
+					dayName.background = true; 
+					dayName.backgroundColor = backgroundColor; 
+					} 
+					*/
 					// Reset the rowIndex 
 					rowIndex = 1; 
 					
@@ -78,30 +108,41 @@
 					for (rowIndex; rowIndex < currentColumn.length; rowIndex++) 
 					{ 
 						dayName = currentColumn[rowIndex]; 
+						//dayName
 						
+						if(colIndex == 0){
+							dayName.setColor(uint("0xE60012")); 							
+						} else if(colIndex == 6) {							
+							dayName.setColor(uint("0x0078D7"));							 
+						} else {							
+							dayName.setColor(uint("0x0A0909"));							 
+						}
+						
+						/*
 						if (isWeekendCol) 
 						{ 
-							dayName.setColor(uint("0xDDDDDD")); 
+						dayName.setColor(uint("0xdddddd")); 
 						} 
 						else 
 						{ 
-							dayName.setColor(uint("0x00317F")); 
-						} 				
+						dayName.setColor(uint("0x00317f")); 
+						} 
+						*/
 					}
+					
 				}
-				*/
+				
+				this.mx_internal::calHeader.visible = false;
+				this.mx_internal::backMonthButton.visible = false;
+				this.mx_internal::fwdMonthButton.visible = false;
+				this.mx_internal::monthDisplay.visible = false;
+				this.mx_internal::yearDisplay.visible = false;
+				
 			}
 			
-			private function onTest(event:MouseEvent):void {
-				if(this.mx_internal::dateGrid.visible == false)
-					this.mx_internal::dateGrid.visible = true;	
-				else
-					this.mx_internal::dateGrid.visible = false;
-			}
 			
 		]]>
 	</mx:Script>
-	<mx:Button label="테스트" id="testbtn" click="onTest(event)" x="31" y="4" width="50" fillAlphas="[1.0, 1.0, 1.0, 1.0]" />
 	
 	
 </mx:DateChooser>

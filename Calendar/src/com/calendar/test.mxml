@@ -2,9 +2,22 @@
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" minWidth="955" minHeight="600" xmlns:lib="com.lib.*">
 	<mx:Script>
 		<![CDATA[
+			import mx.controls.Alert;
+			
+			
+			protected function clickHandler(event:MouseEvent):void
+			{
+				Alert.show(test1.df.selectedDate.toDateString());
+				//ExternalInterface.call("console.log", test1.CalLevel);
+			}
+			
 		]]>
 	</mx:Script>
-	<lib:ExtDateChooser2>
-		
-	</lib:ExtDateChooser2>
+	<mx:HBox>
+		<mx:Button id="testBtn" click="clickHandler(event)" label="테스트" />
+		<lib:ExtDateChooser2 id="test1" />
+		<mx:Label text="테스트!!!" />
+		<mx:Button id="testBtn2" click="clickHandler(event)" label="테스트" />
+	</mx:HBox>
+	
 </mx:Application>

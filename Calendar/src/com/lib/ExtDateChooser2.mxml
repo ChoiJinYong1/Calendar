@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="400" height="300"
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
 		   xmlns:lib="com.lib.*" creationComplete="onCreationComplete(event)">
 	
 	
@@ -7,14 +7,13 @@
 		<![CDATA[
 			import com.lib.DateUtils;
 			
-			import flash.external.ExternalInterface;
-			
 			import mx.collections.ArrayCollection;
+			import mx.core.UIComponentGlobals;
 			import mx.core.mx_internal;
 			import mx.events.DropdownEvent;
 			import mx.events.FlexEvent;
 			
-			private var CalLevel:int;
+			public var CalLevel:int;
 			private var tDate:Date = new Date();
 			private var stdYear:String = "";
 			private var isNew:Boolean = false;
@@ -22,6 +21,7 @@
 			[Bindable] private var dayYN:Boolean = false;
 			[Bindable] private var monthYN:Boolean = false;
 			[Bindable] private var yearYN:Boolean = false;
+			
 			
 			
 			protected function selectView_Click(event:MouseEvent):void
@@ -115,16 +115,20 @@
 			
 			protected function onCreationComplete(event:FlexEvent):void
 			{
-				cal.mx_internal::backMonthButton.visible = false;
-				cal.mx_internal::fwdMonthButton.visible = false;
-				cal.mx_internal::yearDisplay.visible = false;
-				cal.mx_internal::monthDisplay.visible = false;
 				df.mx_internal::showingDropdown = false;
+				
+				UIComponentGlobals.mx_internal::layoutManager.validateClient(canvas, true);
+				UIComponentGlobals.mx_internal::layoutManager.validateNow();
+				//UIComponentGlobals.mx_internal::layoutManager.validateClient(Canvas, true);
+				
+				//Object(canvas).mx_internal::setActualSize(canvas.width,canvas.height);
+				//				UIComponentGlobals.layoutManager.validateClient(canvas, true);
 				
 				cal.selectedDate = tDate;
 				CalLevel = 1 ; // Level1:일달력 , Level2:월달력, Level3:년달력
-				dayYN = true;			
+				dayYN = true;		
 				canvas.visible = false;
+				canvas.includeInLayout = false;
 				year_setting();
 				calbtn_change();
 			}
@@ -162,99 +166,103 @@
 			protected function cal_click(event:MouseEvent):void
 			{
 				calbtn_change();
-				if(canvas.visible)
+				if(canvas.visible){
 					canvas.visible = false;
-				else
+					canvas.includeInLayout = false;
+				}
+				else{
 					canvas.visible = true;
-				
+					//canvas.includeInLayout = true;
+				}
 			}
 			
 			protected function df_Click(event:MouseEvent):void
 			{
+				CalLevel = 1;
 				if(canvas.visible)
+				{
 					canvas.visible = false;
-				else
-					canvas.visible = true;
-				
+					canvas.includeInLayout = false;
+				}
+				else 
+				{
+					
+					canvas.visible = true;	
+					//canvas.includeInLayout = true;			
+				}
 			}
+			
 			
 			protected function df_openHandler(event:DropdownEvent):void
 			{
 				CalLevel = 1;
-				
-				if(canvas.visible)
-					canvas.visible = false;
-				else
-					canvas.visible = true;
+				//canvas.visible = true;
+				df.dropdown.visible = false;
+				df.dropdown.includeInLayout = false;				
 			}
 			
 			protected function df_closeHandler(event:DropdownEvent):void
 			{
-				if(!isNew){
-					isNew = true;
-				} else {
-					CalLevel = 1;
-					if(canvas.visible)
-						canvas.visible = false;
-					else
-						canvas.visible = true;	
-				}
-				
-				
+				CalLevel = 1;
+				cal.mx_internal::dateGrid.visible = true;
+				yearYN = false;
+				monthYN = false;
+				calbtn_change();
 			}
+			
 			
 		]]>
 	</mx:Script>
-	<lib:ExtDateField id="df" open="df_openHandler(event)"  close="df_closeHandler(event)" />
-	<mx:Canvas id="canvas" x="90" y="0">
-		
-		
-		<mx:DateChooser id="cal" name="cal" width="300" height="190" click="cal_click(event)" />
+	<!--<lib:ExtDateField id="df1" open="df_openHandler(event)" close="df_closeHandler(event)" click="df_Click(event)"  />-->
+	<mx:DateField id="df" formatString="YYYY-MM-DD" open="df_openHandler(event)"  close="df_closeHandler(event)"  click="df_Click(event)" />
+	<mx:Canvas id="canvas" x="90" y="0" visible="false" includeInLayout="false"  >
+		<!--<mx:DateChooser id="cal" name="cal" width="300" height="190" click="cal_click(event)" />-->
+		<lib:ExtDateChooser  id="cal" name="cal" width="300" height="190" click="cal_click(event)" />
 		<mx:VBox id="monthCal" x="20" y="34" width="260" visible="{monthYN}" includeInLayout="{monthYN}">
 			<mx:HBox width="100%" height="{cal.height * 0.25}" verticalAlign="middle" horizontalAlign="center">
-				<lib:ExtLabel id="month1" text="1월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center" />
-				<lib:ExtLabel id="month2" text="2월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center" />
-				<lib:ExtLabel id="month3" text="3월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center" />
-				<lib:ExtLabel id="month4" text="4월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center" />
+				<lib:ExtLabel id="month1" text="1월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center"  fontSize="12" fontWeight="bold"  />
+				<lib:ExtLabel id="month2" text="2월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center"  fontSize="12" fontWeight="bold" />
+				<lib:ExtLabel id="month3" text="3월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center"  fontSize="12" fontWeight="bold" />
+				<lib:ExtLabel id="month4" text="4월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center"  fontSize="12" fontWeight="bold" />
 			</mx:HBox>
 			<mx:HBox width="100%" height="{cal.height * 0.25}" verticalAlign="middle" horizontalAlign="center">
-				<lib:ExtLabel id="month5" text="5월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center" />
-				<lib:ExtLabel id="month6" text="6월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center" />
-				<lib:ExtLabel id="month7" text="7월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center" />
-				<lib:ExtLabel id="month8" text="8월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center" />
+				<lib:ExtLabel id="month5" text="5월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center"  fontSize="12" fontWeight="bold" />
+				<lib:ExtLabel id="month6" text="6월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center"  fontSize="12" fontWeight="bold" />
+				<lib:ExtLabel id="month7" text="7월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center"  fontSize="12" fontWeight="bold" />
+				<lib:ExtLabel id="month8" text="8월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center"  fontSize="12" fontWeight="bold" />
 			</mx:HBox>
 			<mx:HBox width="100%" height="{cal.height * 0.25}" verticalAlign="middle" horizontalAlign="center">
-				<lib:ExtLabel id="month9" text="9월" width="25%" click="month_Click(event)"  mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center" />
-				<lib:ExtLabel id="month10" text="10월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center" />
-				<lib:ExtLabel id="month11" text="11월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center" />
-				<lib:ExtLabel id="month12" text="12월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center" />
+				<lib:ExtLabel id="month9" text="9월" width="25%" click="month_Click(event)"  mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center"  fontSize="12" fontWeight="bold" />
+				<lib:ExtLabel id="month10" text="10월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center"  fontSize="12" fontWeight="bold" />
+				<lib:ExtLabel id="month11" text="11월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center"  fontSize="12" fontWeight="bold" />
+				<lib:ExtLabel id="month12" text="12월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center"  fontSize="12" fontWeight="bold" />
 			</mx:HBox>
 		</mx:VBox>
 		
 		<mx:VBox id="yearCal" x="20" y="34" width="260" visible="{yearYN}" includeInLayout="{yearYN}">
 			<mx:HBox width="100%" height="{cal.height * 0.25}" verticalAlign="middle" horizontalAlign="center">
-				<lib:ExtLabel text="{yearArray.getItemAt(0).data}년" width="25%" id="year0" click="year_Click(event)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center" />
-				<lib:ExtLabel text="{yearArray.getItemAt(1).data}년" width="25%" id="year1" click="year_Click(event)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center" />
-				<lib:ExtLabel text="{yearArray.getItemAt(2).data}년" width="25%" id="year2" click="year_Click(event)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center" />
-				<lib:ExtLabel text="{yearArray.getItemAt(3).data}년" width="25%" id="year3" click="year_Click(event)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center" />
+				<lib:ExtLabel text="{yearArray.getItemAt(0).data}년" width="25%" id="year0" click="year_Click(event)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center"  fontSize="12" fontWeight="bold" />
+				<lib:ExtLabel text="{yearArray.getItemAt(1).data}년" width="25%" id="year1" click="year_Click(event)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center"  fontSize="12" fontWeight="bold" />
+				<lib:ExtLabel text="{yearArray.getItemAt(2).data}년" width="25%" id="year2" click="year_Click(event)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center"  fontSize="12" fontWeight="bold" />
+				<lib:ExtLabel text="{yearArray.getItemAt(3).data}년" width="25%" id="year3" click="year_Click(event)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center"  fontSize="12" fontWeight="bold" />
 			</mx:HBox>
 			<mx:HBox width="100%" height="{cal.height * 0.25}" verticalAlign="middle" horizontalAlign="center">
-				<lib:ExtLabel text="{yearArray.getItemAt(4).data}년" width="25%" id="year4" click="year_Click(event)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center" />
-				<lib:ExtLabel text="{yearArray.getItemAt(5).data}년" width="25%" id="year5" click="year_Click(event)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center" />
-				<lib:ExtLabel text="{yearArray.getItemAt(6).data}년" width="25%" id="year6" click="year_Click(event)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center" />
-				<lib:ExtLabel text="{yearArray.getItemAt(7).data}년" width="25%" id="year7" click="year_Click(event)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center" />
+				<lib:ExtLabel text="{yearArray.getItemAt(4).data}년" width="25%" id="year4" click="year_Click(event)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center"  fontSize="12" fontWeight="bold" />
+				<lib:ExtLabel text="{yearArray.getItemAt(5).data}년" width="25%" id="year5" click="year_Click(event)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center"  fontSize="12" fontWeight="bold" />
+				<lib:ExtLabel text="{yearArray.getItemAt(6).data}년" width="25%" id="year6" click="year_Click(event)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center"  fontSize="12" fontWeight="bold" />
+				<lib:ExtLabel text="{yearArray.getItemAt(7).data}년" width="25%" id="year7" click="year_Click(event)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center"  fontSize="12" fontWeight="bold" />
 			</mx:HBox>
 			<mx:HBox width="100%" height="{cal.height * 0.25}" verticalAlign="middle" horizontalAlign="center">
-				<lib:ExtLabel text="{yearArray.getItemAt(8).data}년" width="25%" id="year8" click="year_Click(event)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center" />
-				<lib:ExtLabel text="{yearArray.getItemAt(9).data}년" width="25%" id="year9" click="year_Click(event)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center" />
-				<lib:ExtLabel text="{yearArray.getItemAt(10).data}년" width="25%" id="year10" click="year_Click(event)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center" />
-				<lib:ExtLabel text="{yearArray.getItemAt(11).data}년" width="25%" id="year11" click="year_Click(event)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center" />
+				<lib:ExtLabel text="{yearArray.getItemAt(8).data}년" width="25%" id="year8" click="year_Click(event)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center"  fontSize="12" fontWeight="bold" />
+				<lib:ExtLabel text="{yearArray.getItemAt(9).data}년" width="25%" id="year9" click="year_Click(event)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center"  fontSize="12" fontWeight="bold" />
+				<lib:ExtLabel text="{yearArray.getItemAt(10).data}년" width="25%" id="year10" click="year_Click(event)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center"  fontSize="12" fontWeight="bold" />
+				<lib:ExtLabel text="{yearArray.getItemAt(11).data}년" width="25%" id="year11" click="year_Click(event)" mouseOver="Mouse_Over(event)"  mouseOut="Mouse_Out(event)" textAlign="center"  fontSize="12" fontWeight="bold" />
 			</mx:HBox>
 		</mx:VBox>
 		
-		<mx:Button id="calbtn" x="20" y="4" width="150" fillAlphas="[1.0, 1.0, 1.0, 1.0]" click="selectView_Click(event)" />
-		<mx:Button id="upbtn" x="180" y="4" width="60" fillAlphas="[1.0, 1.0, 1.0, 1.0]" click="up_click(event)" label="△"/>
-		<mx:Button id="downbtn" x="240" y="4" width="60" fillAlphas="[1.0, 1.0, 1.0, 1.0]" click="down_click(event)" label="▽" />
+		<mx:Button id="calbtn" x="10" y="4" width="150" fillAlphas="[1.0, 1.0, 1.0, 1.0]" click="selectView_Click(event)" fontSize="12" fontWeight="bold" />
+		<mx:Button id="upbtn" x="170" y="4" width="60" fillAlphas="[1.0, 1.0, 1.0, 1.0]" click="up_click(event)" label="△"/>
+		<mx:Button id="downbtn" x="230" y="4" width="60" fillAlphas="[1.0, 1.0, 1.0, 1.0]" click="down_click(event)" label="▽" />
 	</mx:Canvas>
 	
 	<mx:Panel x="0" y="200" width="300" visible="false" includeInLayout="false">
