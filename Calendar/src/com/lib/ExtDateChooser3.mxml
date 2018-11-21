@@ -1,0 +1,562 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:DateChooser xmlns:mx="http://www.adobe.com/2006/mxml" dayNames="['일','월','화','수','목','금','토']" fontWeight="bold" fontSize="12" width="300" height="190"
+				creationComplete="creationCompleteHandler(event)" show="onShow(event)" removed="removedHandler(event)" hide="hideHandler(event)">
+	<mx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.containers.HBox;
+			import mx.containers.VBox;
+			import mx.controls.Button;
+			import mx.core.UIComponentGlobals;
+			import mx.core.UITextField;
+			import mx.core.mx_internal;
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+			public var CalLevel:int;
+			private var tDate:Date = new Date();
+			[Bindable] private var yearArray:ArrayCollection = new ArrayCollection();
+			[Bindable] private var dayYN:Boolean = false;
+			[Bindable] private var monthYN:Boolean = false;
+			[Bindable] private var yearYN:Boolean = false;
+			private var stdYear:String = "";
+			
+			
+			private var calbtn:Button = new Button;
+			private var upbtn:Button = new Button;
+			private var downbtn:Button = new Button;
+			private var monthCal:VBox = new VBox;
+			private var monthH1:HBox = new HBox;
+			private var monthH2:HBox = new HBox;
+			private var monthH3:HBox = new HBox;
+			private var month1:ExtLabel = new ExtLabel;
+			private var month2:ExtLabel = new ExtLabel;
+			private var month3:ExtLabel = new ExtLabel;
+			private var month4:ExtLabel = new ExtLabel;
+			private var month5:ExtLabel = new ExtLabel;
+			private var month6:ExtLabel = new ExtLabel;
+			private var month7:ExtLabel = new ExtLabel;
+			private var month8:ExtLabel = new ExtLabel;
+			private var month9:ExtLabel = new ExtLabel;
+			private var month10:ExtLabel = new ExtLabel;
+			private var month11:ExtLabel = new ExtLabel;
+			private var month12:ExtLabel = new ExtLabel;
+			
+			
+			private var yearCal:VBox = new VBox;
+			private var yearH1:HBox = new HBox;
+			private var yearH2:HBox = new HBox;
+			private var yearH3:HBox = new HBox;
+			private var year0:ExtLabel = new ExtLabel;
+			private var year1:ExtLabel = new ExtLabel;
+			private var year2:ExtLabel = new ExtLabel;
+			private var year3:ExtLabel = new ExtLabel;
+			private var year4:ExtLabel = new ExtLabel;
+			private var year5:ExtLabel = new ExtLabel;
+			private var year6:ExtLabel = new ExtLabel;
+			private var year7:ExtLabel = new ExtLabel;
+			private var year8:ExtLabel = new ExtLabel;
+			private var year9:ExtLabel = new ExtLabel;
+			private var year10:ExtLabel = new ExtLabel;
+			private var year11:ExtLabel = new ExtLabel;
+			//private var year12:ExtLabel = new ExtLabel;
+			
+			
+			override protected function updateDisplayList(w:Number, h:Number):void
+			{
+				super.updateDisplayList(w, h);
+				
+				
+				
+				
+				// Now the dayBlocksArray has been filled. The Array looks as follows 
+				// dayBlocksArray["rows"]["columns] .... therefor [i][0 (zero)] will always get the dayNames (SMTWTFS) 
+				// Compare the dayNames with the set this.dayNames (which always start with sunday) and find the weekend days 
+				var colIndex:uint = 0; 
+				var rowIndex:uint = 1; // The first row (SMTWTFS) is handled seperately 
+				var currentColumn:Array; 
+				var dayName:UITextField; 
+				//var backgroundColor:uint = this.getStyle("dayNamesBackgroundColor"); 
+				var backgroundColor:uint = uint("0xececec");
+				var isWeekendCol:Boolean = false; 
+				var currentTextFormat:TextFormat; 
+				
+				// When the style is not found the default of white will be used. 
+				
+				
+				if (!backgroundColor) 
+				{ 
+					backgroundColor = 0xFFFFFF; 
+				} 
+				
+				
+				
+				for (colIndex; colIndex < 7; colIndex++) 
+				{ 	
+					
+					// First determine if the first item in this row (SMTWTFS) is a week/weekend day
+					
+					currentColumn = mx_internal::dateGrid.mx_internal::dayBlocksArray[colIndex]; 
+					
+					dayName = currentColumn[0]; 
+					
+					// Determine if this is a weekend row 
+					// The dayNames array is fixed in the order of index 0 = sunday and index 6 = saturday. 
+					// Therefor check of the text value of the current dayName is equal to either of 
+					// those two. If it is we are dealing with a weekend column 
+					isWeekendCol = dayName.text == this.dayNames[0] || dayName.text == this.dayNames[6]; 
+					if(colIndex == 0){
+						currentTextFormat = dayName.getTextFormat();
+						currentTextFormat.color = uint("0xE60012");
+						dayName.setTextFormat(currentTextFormat); 
+						
+						// Set the background color 
+						dayName.background = true; 
+						dayName.backgroundColor = backgroundColor; 
+					} else if(colIndex == 6) {
+						
+						currentTextFormat = dayName.getTextFormat();
+						currentTextFormat.color = uint("0x0078D7");
+						dayName.setTextFormat(currentTextFormat); 
+						
+						// Set the background color 
+						dayName.background = true; 
+						dayName.backgroundColor = backgroundColor; 
+					} else {
+						currentTextFormat = dayName.getTextFormat();
+						currentTextFormat.color = uint("0x0A0909");
+						dayName.setTextFormat(currentTextFormat); 
+						
+						// Set the background color 
+						dayName.background = true; 
+						dayName.backgroundColor = backgroundColor; 						
+					}
+					
+					/*
+					if (isWeekendCol) 
+					{ 
+					// Set the color 
+					
+					//currentTextFormat.color = getStyle("weekendHeaderColor"); 
+					currentTextFormat = dayName.getTextFormat();
+					currentTextFormat.color = uint("0xdddddd");
+					dayName.setTextFormat(currentTextFormat); 
+					
+					// Set the background color 
+					dayName.background = true; 
+					dayName.backgroundColor = backgroundColor; 
+					} 
+					else 
+					{ 
+					currentTextFormat = dayName.getTextFormat(); 
+					currentTextFormat.color = uint("0x444444"); 
+					dayName.setTextFormat(currentTextFormat); 
+					
+					// Set the background color 
+					dayName.background = true; 
+					dayName.backgroundColor = backgroundColor; 
+					} 
+					*/
+					// Reset the rowIndex 
+					rowIndex = 1; 
+					
+					// Now go through all the other rows of this column 
+					for (rowIndex; rowIndex < currentColumn.length; rowIndex++) 
+					{ 
+						dayName = currentColumn[rowIndex]; 
+						//dayName
+						
+						if(colIndex == 0){
+							dayName.setColor(uint("0xE60012")); 							
+						} else if(colIndex == 6) {							
+							dayName.setColor(uint("0x0078D7"));							 
+						} else {							
+							dayName.setColor(uint("0x0A0909"));							 
+						}
+						
+						/*
+						if (isWeekendCol) 
+						{ 
+						dayName.setColor(uint("0xdddddd")); 
+						} 
+						else 
+						{ 
+						dayName.setColor(uint("0x00317f")); 
+						} 
+						*/
+					}
+					
+				}
+				
+				this.mx_internal::calHeader.visible = false;
+				this.mx_internal::backMonthButton.visible = false;
+				this.mx_internal::fwdMonthButton.visible = false;
+				this.mx_internal::monthDisplay.visible = false;
+				this.mx_internal::yearDisplay.visible = false;
+				
+				
+				//displayObject();
+			}
+			/*
+			override protected function createChildren():void{
+			super.createChildren();
+			
+			createBtnChild();
+			createMonthChild();
+			createYearChild();
+			
+			}*/
+			/*
+			private function createChildren():void{
+			super.createChildren();
+			
+			createBtnChild();
+			createMonthChild();
+			createYearChild();
+			
+			}
+			*/
+			private function createBtnChild():void{
+				PopUpManager.addPopUp(calbtn,this,false);
+				PopUpManager.bringToFront(calbtn);
+				PopUpManager.addPopUp(upbtn,this,false);
+				PopUpManager.bringToFront(upbtn);
+				PopUpManager.addPopUp(downbtn,this,false);
+				PopUpManager.bringToFront(downbtn);
+				calbtn.x = this.x + 10; calbtn.y = this.y + 4; calbtn.width=150;
+				upbtn.x = this.x + 170; upbtn.y = this.y + 4; upbtn.width=60; upbtn.label = "△";
+				downbtn.x = this.x + 230; downbtn.y = this.y + 4; downbtn.width=60; downbtn.label = "▽";		
+				
+				calbtn.addEventListener(MouseEvent.CLICK,selectView_Click);
+				upbtn.addEventListener(MouseEvent.CLICK,up_click);
+				downbtn.addEventListener(MouseEvent.CLICK,down_click);		
+			}
+			
+			private function createMonthChild():void{
+				
+				PopUpManager.addPopUp(monthCal,this,false);
+				
+				monthCal.addChild(monthH1);				
+				monthH1.addChild(month1);				monthH1.addChild(month2);
+				monthH1.addChild(month3);				monthH1.addChild(month4);
+				monthCal.addChild(monthH2);
+				monthH2.addChild(month5);				monthH2.addChild(month6);
+				monthH2.addChild(month7);				monthH2.addChild(month8);
+				monthCal.addChild(monthH3);
+				monthH3.addChild(month9);				monthH3.addChild(month10);
+				monthH3.addChild(month11);				monthH3.addChild(month12);
+				
+				
+				monthCal.x = this.x + 20; monthCal.y = this.y + 34; monthCal.width = 260; monthCal.height = 190; monthCal.visible = monthYN; monthCal.includeInLayout = monthYN; 
+				monthH1.width = monthCal.width; monthH1.height = this.height * 0.25; monthH1.setStyle("verticalAlign", "middle"); monthH1.setStyle("horizontalAlign", "center");
+				monthH2.width = monthCal.width; monthH2.height = this.height * 0.25; monthH2.setStyle("verticalAlign", "middle"); monthH2.setStyle("horizontalAlign", "center");
+				monthH3.width = monthCal.width; monthH3.height = this.height * 0.25; monthH3.setStyle("verticalAlign", "middle"); monthH3.setStyle("horizontalAlign", "center");
+				
+				month1.text = "1월"; month2.text = "2월"; month3.text = "3월"; month4.text = "4월";
+				month1.width = monthH1.width * 0.2; month2.width = monthH1.width * 0.2; month3.width = monthH1.width * 0.2; month4.width = monthH1.width * 0.2; 
+				/*
+				month1.setStyle("textAlign","center"); 	month2.setStyle("textAlign","center"); 
+				month1.setStyle("fontSize","12"); 		month2.setStyle("fontSize","12");
+				month1.setStyle("fontWeight","bold"); 	month2.setStyle("fontWeight","bold");				
+				month3.setStyle("textAlign","center"); 	month4.setStyle("textAlign","center");
+				month3.setStyle("fontSize","12"); 		month4.setStyle("fontSize","12");
+				month3.setStyle("fontWeight","bold"); 	month4.setStyle("fontWeight","bold");
+				*/
+				month5.text = "5월"; month6.text = "6월"; month7.text = "7월"; month8.text = "8월";				
+				month5.width = monthH1.width * 0.2; month6.width = monthH1.width * 0.2; month7.width = monthH1.width * 0.2; month8.width = monthH1.width * 0.2; 
+				/*
+				month5.setStyle("textAlign","center"); 	month6.setStyle("textAlign","center"); 
+				month5.setStyle("fontSize","12"); 		month6.setStyle("fontSize","12");
+				month5.setStyle("fontWeight","bold"); 	month6.setStyle("fontWeight","bold");
+				month7.setStyle("textAlign","center"); 	month8.setStyle("textAlign","center");
+				month7.setStyle("fontSize","12"); 		month8.setStyle("fontSize","12");
+				month7.setStyle("fontWeight","bold"); 	month8.setStyle("fontWeight","bold");
+				*/
+				month9.text = "9월"; month10.text = "10월"; month11.text = "11월"; month12.text = "12월";
+				month9.width = monthH1.width * 0.2; month10.width = monthH1.width * 0.2; month11.width = monthH1.width * 0.2; month12.width = monthH1.width * 0.2; 
+				/*
+				month9.setStyle("textAlign","center"); 	month10.setStyle("textAlign","center"); 
+				month9.setStyle("fontSize","12"); 		month10.setStyle("fontSize","12");
+				month9.setStyle("fontWeight","bold"); 	month10.setStyle("fontWeight","bold");
+				month11.setStyle("textAlign","center");	month12.setStyle("textAlign","center");
+				month11.setStyle("fontSize","12"); 		month12.setStyle("fontSize","12");
+				month11.setStyle("fontWeight","bold"); 	month12.setStyle("fontWeight","bold");
+				*/
+				
+				
+				month1.addEventListener(MouseEvent.CLICK,month_Click);				month2.addEventListener(MouseEvent.CLICK,month_Click);
+				month3.addEventListener(MouseEvent.CLICK,month_Click);				month4.addEventListener(MouseEvent.CLICK,month_Click);
+				month5.addEventListener(MouseEvent.CLICK,month_Click);				month6.addEventListener(MouseEvent.CLICK,month_Click);
+				month7.addEventListener(MouseEvent.CLICK,month_Click);				month8.addEventListener(MouseEvent.CLICK,month_Click);
+				month9.addEventListener(MouseEvent.CLICK,month_Click);				month10.addEventListener(MouseEvent.CLICK,month_Click);
+				month11.addEventListener(MouseEvent.CLICK,month_Click);				month12.addEventListener(MouseEvent.CLICK,month_Click);				
+				
+				/*
+				month1.addEventListener(MouseEvent.MOUSE_OVER,Mouse_Over);				month2.addEventListener(MouseEvent.MOUSE_OVER,Mouse_Over);
+				month3.addEventListener(MouseEvent.MOUSE_OVER,Mouse_Over);				month4.addEventListener(MouseEvent.MOUSE_OVER,Mouse_Over);
+				month5.addEventListener(MouseEvent.MOUSE_OVER,Mouse_Over);				month6.addEventListener(MouseEvent.MOUSE_OVER,Mouse_Over);
+				month7.addEventListener(MouseEvent.MOUSE_OVER,Mouse_Over);				month8.addEventListener(MouseEvent.MOUSE_OVER,Mouse_Over);
+				month9.addEventListener(MouseEvent.MOUSE_OVER,Mouse_Over);				month10.addEventListener(MouseEvent.MOUSE_OVER,Mouse_Over);
+				month11.addEventListener(MouseEvent.MOUSE_OVER,Mouse_Over);				month12.addEventListener(MouseEvent.MOUSE_OVER,Mouse_Over);
+				
+				month1.addEventListener(MouseEvent.MOUSE_OUT,Mouse_Out);				month2.addEventListener(MouseEvent.MOUSE_OUT,Mouse_Out);
+				month3.addEventListener(MouseEvent.MOUSE_OUT,Mouse_Out);				month4.addEventListener(MouseEvent.MOUSE_OUT,Mouse_Out);
+				month5.addEventListener(MouseEvent.MOUSE_OUT,Mouse_Out);				month6.addEventListener(MouseEvent.MOUSE_OUT,Mouse_Out);
+				month7.addEventListener(MouseEvent.MOUSE_OUT,Mouse_Out);				month8.addEventListener(MouseEvent.MOUSE_OUT,Mouse_Out);
+				month9.addEventListener(MouseEvent.MOUSE_OUT,Mouse_Out);				month10.addEventListener(MouseEvent.MOUSE_OUT,Mouse_Out);
+				month11.addEventListener(MouseEvent.MOUSE_OUT,Mouse_Out);				month12.addEventListener(MouseEvent.MOUSE_OUT,Mouse_Out);		
+				*/
+			}
+			
+			
+			private function createYearChild():void{				
+				PopUpManager.addPopUp(yearCal,this,false);
+				yearCal.addChild(yearH1);				
+				yearH1.addChild(year0);				yearH1.addChild(year1);
+				yearH1.addChild(year2);				yearH1.addChild(year3);
+				yearCal.addChild(yearH2);
+				yearH2.addChild(year4);				yearH2.addChild(year5);
+				yearH2.addChild(year6);				yearH2.addChild(year7);
+				yearCal.addChild(yearH3);
+				yearH3.addChild(year8);				yearH3.addChild(year9);
+				yearH3.addChild(year10);			yearH3.addChild(year11);
+				
+				
+				yearCal.x = this.x + 20; yearCal.y = this.y + 34; yearCal.width = 260; yearCal.height = 190; yearCal.visible = yearYN; yearCal.includeInLayout = yearYN; 
+				yearH1.width = yearCal.width; yearH1.height = this.height * 0.25; yearH1.setStyle("verticalAlign", "middle"); yearH1.setStyle("horizontalAlign", "center");
+				yearH2.width = yearCal.width; yearH2.height = this.height * 0.25; yearH2.setStyle("verticalAlign", "middle"); yearH2.setStyle("horizontalAlign", "center");
+				yearH3.width = yearCal.width; yearH3.height = this.height * 0.25; yearH3.setStyle("verticalAlign", "middle"); yearH3.setStyle("horizontalAlign", "center");
+				
+				if(!yearArray)
+				{
+					year0.text = yearArray.getItemAt(0).data; year1.text = yearArray.getItemAt(1).data; year2.text = yearArray.getItemAt(2).data;
+					year3.text = yearArray.getItemAt(3).data; year4.text = yearArray.getItemAt(4).data; year5.text = yearArray.getItemAt(5).data;
+					year6.text = yearArray.getItemAt(6).data; year7.text = yearArray.getItemAt(7).data; year8.text = yearArray.getItemAt(8).data;
+					year9.text = yearArray.getItemAt(9).data; year10.text = yearArray.getItemAt(10).data; year11.text = yearArray.getItemAt(11).data;
+					
+					
+					year0.width = yearH1.width * 0.2; year1.width = yearH1.width * 0.2; year2.width = yearH1.width * 0.2; year3.width = yearH1.width * 0.2; 
+					year4.width = yearH1.width * 0.2; year5.width = yearH1.width * 0.2; year6.width = yearH1.width * 0.2; year7.width = yearH1.width * 0.2; 
+					year8.width = yearH1.width * 0.2; year9.width = yearH1.width * 0.2; year10.width = yearH1.width * 0.2; year11.width = yearH1.width * 0.2; 
+				}
+				
+				year1.addEventListener(MouseEvent.CLICK,year_Click);				year2.addEventListener(MouseEvent.CLICK,year_Click);
+				year3.addEventListener(MouseEvent.CLICK,year_Click);				year4.addEventListener(MouseEvent.CLICK,year_Click);
+				year5.addEventListener(MouseEvent.CLICK,year_Click);				year6.addEventListener(MouseEvent.CLICK,year_Click);
+				year7.addEventListener(MouseEvent.CLICK,year_Click);				year8.addEventListener(MouseEvent.CLICK,year_Click);
+				year9.addEventListener(MouseEvent.CLICK,year_Click);				year10.addEventListener(MouseEvent.CLICK,year_Click);
+				year11.addEventListener(MouseEvent.CLICK,year_Click);				year0.addEventListener(MouseEvent.CLICK,year_Click);	
+				
+			}
+			
+			protected function year_Click(event:MouseEvent):void
+			{	
+				var tempDate:Date = this.selectedDate;
+				tempDate.setFullYear(int(event.currentTarget.text.replace("년","")));
+				this.selectedDate = tempDate;
+				CalLevel = 1;
+				selectView_Click(event);
+			}
+			
+			protected function month_Click(event:MouseEvent):void
+			{	
+				var tempDate:Date = this.selectedDate;
+				
+				tempDate.setMonth(int(event.currentTarget.text.replace("월","")-1));
+				this.selectedDate = tempDate;
+				
+				CalLevel = 3;
+				selectView_Click(event);
+			}
+			/*
+			protected function Mouse_Over(event:MouseEvent):void
+			{	
+			event.currentTarget..getTxt().background = true;
+			event.currentTarget..getTxt().backgroundColor = "0xB2E1FF";	
+			}
+			
+			protected function Mouse_Out(event:MouseEvent):void
+			{
+			event.currentTarget..getTxt().background = false;
+			}
+			*/
+			protected function down_click(event:MouseEvent):void
+			{
+				
+				if(CalLevel == 1){					
+					this.selectedDate = DateUtils.dateAdd(DateUtils.MONTH,-1,this.selectedDate);
+				} else if(CalLevel == 2){
+					this.selectedDate = DateUtils.dateAdd(DateUtils.YEAR,-1,this.selectedDate);
+				} else if(CalLevel == 3){
+					this.mx_internal::dateGrid.visible = false;
+					yearYN = true;
+					monthYN = false;
+					this.selectedDate = DateUtils.dateAdd(DateUtils.YEAR,-10,this.selectedDate);
+					year_setting();
+				}
+				calbtn_change();
+			}
+			
+			protected function up_click(event:MouseEvent):void
+			{
+				if(CalLevel == 1){					
+					this.selectedDate = DateUtils.dateAdd(DateUtils.MONTH,1,this.selectedDate);
+				} else if(CalLevel == 2){
+					this.selectedDate = DateUtils.dateAdd(DateUtils.YEAR,1,this.selectedDate);
+				} else if(CalLevel == 3){
+					this.mx_internal::dateGrid.visible = false;
+					yearYN = true;
+					monthYN = false;
+					this.selectedDate = DateUtils.dateAdd(DateUtils.YEAR,10,this.selectedDate);
+					year_setting();
+				}
+				calbtn_change();
+			}
+			
+			
+			private function year_setting():void
+			{
+				var yDate:Date = new Date();
+				yDate.setFullYear(int(this.selectedDate.fullYear.toString().substr(0,3) + "0"));
+				
+				DateUtils.dateAdd("year",1,yDate);
+				stdYear = "";
+				yearArray = new ArrayCollection();
+				for (var ii:int = 0 ; ii <12 ; ii ++){
+					if(ii==0){ 
+						stdYear += DateUtils.dateAdd(DateUtils.YEAR,ii,yDate).fullYear.toString() + "년";
+					}
+					if(ii==11){
+						stdYear += " ~ " + DateUtils.dateAdd(DateUtils.YEAR,ii,yDate).fullYear.toString() + "년";
+					}
+					
+					yearArray.addItem({id:ii,data:DateUtils.dateAdd(DateUtils.YEAR,ii,yDate).fullYear});
+				}
+				if(yearArray.length != 0)
+				{
+					year0.text = yearArray.getItemAt(0).data; year1.text = yearArray.getItemAt(1).data; year2.text = yearArray.getItemAt(2).data;
+					year3.text = yearArray.getItemAt(3).data; year4.text = yearArray.getItemAt(4).data; year5.text = yearArray.getItemAt(5).data;
+					year6.text = yearArray.getItemAt(6).data; year7.text = yearArray.getItemAt(7).data; year8.text = yearArray.getItemAt(8).data;
+					year9.text = yearArray.getItemAt(9).data; year10.text = yearArray.getItemAt(10).data; year11.text = yearArray.getItemAt(11).data;
+					
+					
+					year0.width = yearH1.width * 0.2; year1.width = yearH1.width * 0.2; year2.width = yearH1.width * 0.2; year3.width = yearH1.width * 0.2; 
+					year4.width = yearH1.width * 0.2; year5.width = yearH1.width * 0.2; year6.width = yearH1.width * 0.2; year7.width = yearH1.width * 0.2; 
+					year8.width = yearH1.width * 0.2; year9.width = yearH1.width * 0.2; year10.width = yearH1.width * 0.2; year11.width = yearH1.width * 0.2; 
+				}
+			}
+			
+			protected function selectView_Click(event:MouseEvent):void
+			{
+				CalLevel += 1;
+				if(CalLevel > 3) 
+					CalLevel = 1;
+				if(CalLevel == 1){					
+					this.mx_internal::dateGrid.visible = true;
+					
+					monthCal.visible = false;
+					monthCal.includeInLayout = false;
+					
+					yearCal.visible = false;
+					yearCal.includeInLayout = false;
+					
+					yearYN = false;
+					monthYN = false;
+				} else if(CalLevel == 2){
+					this.mx_internal::dateGrid.visible = false;
+					//PopUpManager.bringToFront(monthCal);
+					
+					monthCal.visible = true;
+					monthCal.includeInLayout = true;
+					
+					yearCal.visible = false;
+					yearCal.includeInLayout = false;
+					
+					monthYN = true;
+					yearYN = false;
+				} else if(CalLevel == 3){
+					this.mx_internal::dateGrid.visible = false;
+					
+					monthCal.visible = false;
+					monthCal.includeInLayout = false;
+					
+					yearCal.visible = true;
+					yearCal.includeInLayout = true;
+					
+					yearYN = true;
+					monthYN = false;
+				}
+				calbtn_change();
+				
+			}
+			
+			private function calbtn_change():void
+			{
+				if(CalLevel == 1){
+					calbtn.label = this.selectedDate.fullYear.toString() + "년" + (this.selectedDate.month+1).toString() + "월" ; 
+					//calText.text = this.selectedDate.fullYear.toString() + "년" + (this.selectedDate.month+1).toString() + "월" + this.selectedDate.date.toString() + "일";
+				} else if(CalLevel == 2){
+					calbtn.label = this.selectedDate.fullYear.toString() + "년";
+					//calText.text = this.selectedDate.fullYear.toString() + "년" + (this.selectedDate.month+1).toString() + "월" ;
+				} else if(CalLevel == 3){
+					calbtn.label = stdYear;
+					//calText.text = stdYear;
+				}
+				//df.selectedDate = cal.selectedDate;
+			}
+			
+			
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				// TODO Auto-generated method stub
+				
+				this.selectedDate = tDate;
+				CalLevel = 1 ; // Level1:일달력 , Level2:월달력, Level3:년달력
+				dayYN = true;		
+				addPopup();
+				year_setting();
+				calbtn_change();
+			}
+			
+			protected function onShow(event:FlexEvent):void{
+				addPopup();
+			}
+			
+			private function addPopup():void{
+				
+				createBtnChild();
+				createMonthChild();
+				createYearChild();
+			}
+			
+			private function removePopup():void{
+				PopUpManager.removePopUp(calbtn);
+				PopUpManager.removePopUp(upbtn);
+				PopUpManager.removePopUp(downbtn);
+				PopUpManager.removePopUp(monthCal);
+				PopUpManager.removePopUp(yearCal);
+			}
+			
+			protected function removedHandler(event:Event):void
+			{
+				// TODO Auto-generated method stub
+				ExternalInterface.call("console.log", "removedHandler");
+				if(!this.visible)
+					removePopup();
+			}
+			
+			
+			
+			protected function hideHandler(event:FlexEvent):void
+			{
+				// TODO Auto-generated method stub
+				
+				ExternalInterface.call("console.log", "hideHandler");
+				if(!this.visible)
+					removePopup();
+			}
+			
+		]]>
+	</mx:Script>
+	
+	
+</mx:DateChooser>

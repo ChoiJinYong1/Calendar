@@ -6,6 +6,7 @@
 	<mx:Script>
 		<![CDATA[
 			import com.lib.DateUtils;
+			
 			import flash.external.ExternalInterface;
 			
 			import mx.collections.ArrayCollection;
@@ -45,6 +46,10 @@
 					monthYN = false;
 				}
 				calbtn_change();
+				
+				ExternalInterface.call("console.log", "monthH1.x:" + monthH1.x + "|monthH1.y:" + monthH1.y  + "|monthH1.width:" + monthH1.width  + "|monthH1.height:" + monthH1.height );
+				ExternalInterface.call("console.log", "monthH2.x:" + monthH2.x + "|monthH2.y:" + monthH2.y  + "|monthH2.width:" + monthH2.width  + "|monthH2.height:" + monthH2.height );
+				ExternalInterface.call("console.log", "monthH3.x:" + monthH3.x + "|monthH3.y:" + monthH3.y  + "|monthH3.width:" + monthH3.width  + "|monthH3.height:" + monthH3.height );
 			}
 			
 			protected function up_click(event:MouseEvent):void
@@ -122,15 +127,15 @@
 				//PopUpManager.bringToFront(canvas);
 				//UIComponentGlobals.mx_internal::layoutManager.validateClient(Canvas, true);
 				
+				
 				//Object(canvas).mx_internal::setActualSize(canvas.width,canvas.height);
-				//				UIComponentGlobals.layoutManager.validateClient(canvas, true);
+				//UIComponentGlobals.layoutManager.validateClient(canvas, true);
 				
 				//				Object(canvas).setActualSize(canvas.getExplicitOrMeasuredWidth(),canvas.getExplicitOrMeasuredHeight());
 				//canvas.mx_internal::border.;
+				
 				ExternalInterface.call("console.log","start");
-				canvas.mx_internal::_explicitMaxHeight = canvas.height;
-				canvas.mx_internal::_explicitMaxWidth = canvas.width;
-				ExternalInterface.call("console.log",canvas.mx_internal::_explicitMaxHeight);
+				ExternalInterface.call("console.log","");
 				ExternalInterface.call("console.log","end");
 				cal.selectedDate = tDate;
 				CalLevel = 1 ; // Level1:일달력 , Level2:월달력, Level3:년달력
@@ -182,6 +187,7 @@
 					canvas.visible = true;
 					//canvas.includeInLayout = true;
 				}
+				
 			}
 			
 			protected function df_Click(event:MouseEvent):void
@@ -197,8 +203,8 @@
 					
 					canvas.visible = true;	
 					//canvas.includeInLayout = true;		
-					UIComponentGlobals.mx_internal::layoutManager.validateClient(canvas, true);
-					UIComponentGlobals.mx_internal::layoutManager.validateNow();	
+					//UIComponentGlobals.mx_internal::layoutManager.validateClient(canvas, true);
+					//UIComponentGlobals.mx_internal::layoutManager.validateNow();	
 					//canvas::validateDisplayList();
 					
 				}
@@ -215,6 +221,10 @@
 			
 			protected function df_closeHandler(event:DropdownEvent):void
 			{
+				
+				ExternalInterface.call("console.log","df_closeHandler start");
+				ExternalInterface.call("console.log","");
+				ExternalInterface.call("console.log","df_closeHandler end");
 				CalLevel = 1;
 				cal.mx_internal::dateGrid.visible = true;
 				yearYN = false;
@@ -241,19 +251,19 @@
 		<!--<mx:Canvas id="canvas" x="90" y="0" visible="false" includeInLayout="false" borderStyle="solid" backgroundColor="white" > -->
 		<lib:ExtDateChooser  id="cal" name="cal" width="100%" height="100%" click="cal_click(event)" />
 		<mx:VBox id="monthCal" x="20" y="34" width="260" visible="{monthYN}" includeInLayout="{monthYN}">
-			<mx:HBox width="100%" height="{cal.height * 0.25}" verticalAlign="middle" horizontalAlign="center">
+			<mx:HBox id="monthH1" width="100%" height="{cal.height * 0.25}" verticalAlign="middle" horizontalAlign="center">
 				<lib:ExtLabel id="month1" text="1월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center"  fontSize="12" fontWeight="bold"  />
 				<lib:ExtLabel id="month2" text="2월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center"  fontSize="12" fontWeight="bold" />
 				<lib:ExtLabel id="month3" text="3월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center"  fontSize="12" fontWeight="bold" />
 				<lib:ExtLabel id="month4" text="4월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center"  fontSize="12" fontWeight="bold" />
 			</mx:HBox>
-			<mx:HBox width="100%" height="{cal.height * 0.25}" verticalAlign="middle" horizontalAlign="center">
+			<mx:HBox id="monthH2" width="100%" height="{cal.height * 0.25}" verticalAlign="middle" horizontalAlign="center">
 				<lib:ExtLabel id="month5" text="5월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center"  fontSize="12" fontWeight="bold" />
 				<lib:ExtLabel id="month6" text="6월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center"  fontSize="12" fontWeight="bold" />
 				<lib:ExtLabel id="month7" text="7월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center"  fontSize="12" fontWeight="bold" />
 				<lib:ExtLabel id="month8" text="8월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center"  fontSize="12" fontWeight="bold" />
 			</mx:HBox>
-			<mx:HBox width="100%" height="{cal.height * 0.25}" verticalAlign="middle" horizontalAlign="center">
+			<mx:HBox id="monthH3" width="100%" height="{cal.height * 0.25}" verticalAlign="middle" horizontalAlign="center">
 				<lib:ExtLabel id="month9" text="9월" width="25%" click="month_Click(event)"  mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center"  fontSize="12" fontWeight="bold" />
 				<lib:ExtLabel id="month10" text="10월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center"  fontSize="12" fontWeight="bold" />
 				<lib:ExtLabel id="month11" text="11월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center"  fontSize="12" fontWeight="bold" />

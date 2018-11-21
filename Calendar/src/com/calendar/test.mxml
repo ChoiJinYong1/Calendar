@@ -3,20 +3,34 @@
 	<mx:Script>
 		<![CDATA[
 			import mx.controls.Alert;
+			import mx.core.mx_internal;
+			import flash.external.ExternalInterface;
 			
 			
 			protected function clickHandler(event:MouseEvent):void
 			{
-				Alert.show(test1.df.selectedDate.toDateString());
+				Alert.show(test1.selectedDate.toDateString());
+				//Alert.show(test1.df.selectedDate.toDateString());
 				//ExternalInterface.call("console.log", test1.CalLevel);
 			}
 			
 		]]>
 	</mx:Script>
 	<mx:HBox>
+		<lib:ExtDateFiled2 id="test1">
+			
+		</lib:ExtDateFiled2>
+		<lib:ExtDateFiled2 id="test2">
+			
+		</lib:ExtDateFiled2>
+		<lib:ExtDateFiled2 id="test3">
+			
+		</lib:ExtDateFiled2>
+		<!--<lib:ExtDateChooser3 />
 		<mx:Button id="testBtn" click="clickHandler(event)" label="테스트" />
 		<lib:ExtDateChooser2 id="test1" />
 		<mx:Label text="테스트!!!" />
+		-->
 		<mx:Button id="testBtn2" click="clickHandler(event)" label="테스트" />
 	</mx:HBox>
 	
