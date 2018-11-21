@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
-		   xmlns:lib="com.lib.*" creationComplete="onCreationComplete(event)">
+		   xmlns:lib="com.lib.*" creationComplete="onCreationComplete(event)" >
 	
 	
 	<mx:Script>
 		<![CDATA[
 			import com.lib.DateUtils;
+			import flash.external.ExternalInterface;
 			
 			import mx.collections.ArrayCollection;
 			import mx.core.UIComponentGlobals;
 			import mx.core.mx_internal;
 			import mx.events.DropdownEvent;
 			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
 			
 			public var CalLevel:int;
 			private var tDate:Date = new Date();
@@ -117,13 +119,19 @@
 			{
 				df.mx_internal::showingDropdown = false;
 				
-				UIComponentGlobals.mx_internal::layoutManager.validateClient(canvas, true);
-				UIComponentGlobals.mx_internal::layoutManager.validateNow();
+				//PopUpManager.bringToFront(canvas);
 				//UIComponentGlobals.mx_internal::layoutManager.validateClient(Canvas, true);
 				
 				//Object(canvas).mx_internal::setActualSize(canvas.width,canvas.height);
 				//				UIComponentGlobals.layoutManager.validateClient(canvas, true);
 				
+				//				Object(canvas).setActualSize(canvas.getExplicitOrMeasuredWidth(),canvas.getExplicitOrMeasuredHeight());
+				//canvas.mx_internal::border.;
+				ExternalInterface.call("console.log","start");
+				canvas.mx_internal::_explicitMaxHeight = canvas.height;
+				canvas.mx_internal::_explicitMaxWidth = canvas.width;
+				ExternalInterface.call("console.log",canvas.mx_internal::_explicitMaxHeight);
+				ExternalInterface.call("console.log","end");
 				cal.selectedDate = tDate;
 				CalLevel = 1 ; // Level1:일달력 , Level2:월달력, Level3:년달력
 				dayYN = true;		
@@ -188,7 +196,11 @@
 				{
 					
 					canvas.visible = true;	
-					//canvas.includeInLayout = true;			
+					//canvas.includeInLayout = true;		
+					UIComponentGlobals.mx_internal::layoutManager.validateClient(canvas, true);
+					UIComponentGlobals.mx_internal::layoutManager.validateNow();	
+					//canvas::validateDisplayList();
+					
 				}
 			}
 			
@@ -196,9 +208,9 @@
 			protected function df_openHandler(event:DropdownEvent):void
 			{
 				CalLevel = 1;
-				//canvas.visible = true;
+				canvas.visible = true;
 				df.dropdown.visible = false;
-				df.dropdown.includeInLayout = false;				
+				//df.dropdown.includeInLayout = false;				
 			}
 			
 			protected function df_closeHandler(event:DropdownEvent):void
@@ -214,10 +226,20 @@
 		]]>
 	</mx:Script>
 	<!--<lib:ExtDateField id="df1" open="df_openHandler(event)" close="df_closeHandler(event)" click="df_Click(event)"  />-->
+	
 	<mx:DateField id="df" formatString="YYYY-MM-DD" open="df_openHandler(event)"  close="df_closeHandler(event)"  click="df_Click(event)" />
-	<mx:Canvas id="canvas" x="90" y="0" visible="false" includeInLayout="false"  >
-		<!--<mx:DateChooser id="cal" name="cal" width="300" height="190" click="cal_click(event)" />-->
-		<lib:ExtDateChooser  id="cal" name="cal" width="300" height="190" click="cal_click(event)" />
+	<!--<mx:Form id="canvas" x="90" y="0" visible="false" includeInLayout="false" >-->
+	
+	<!--<mx:HBox  id="canvas" x="90" y="0" visible="false" includeInLayout="false"   width="300" height="190">-->
+	<!--<mx:ViewStack id="canvas" x="90" y="0" visible="false" includeInLayout="false" >-->
+	
+	<!--<mx:Panel  id="canvas" x="90" y="0" visible="false" includeInLayout="false" >-->
+	<!--<mx:DividedBox id="canvas" x="90" y="0" visible="false" includeInLayout="false" >-->
+	<!--<mx:Accordion id="canvas" x="90" y="0" visible="false" includeInLayout="false" >-->
+	
+	<mx:Canvas id="canvas" x="90" y="0" visible="false" includeInLayout="false" borderStyle="solid" backgroundColor="#FFFFFF"  width="300" height="190" >
+		<!--<mx:Canvas id="canvas" x="90" y="0" visible="false" includeInLayout="false" borderStyle="solid" backgroundColor="white" > -->
+		<lib:ExtDateChooser  id="cal" name="cal" width="100%" height="100%" click="cal_click(event)" />
 		<mx:VBox id="monthCal" x="20" y="34" width="260" visible="{monthYN}" includeInLayout="{monthYN}">
 			<mx:HBox width="100%" height="{cal.height * 0.25}" verticalAlign="middle" horizontalAlign="center">
 				<lib:ExtLabel id="month1" text="1월" width="25%" click="month_Click(event)" mouseOver="Mouse_Over(event)" mouseOut="Mouse_Out(event)" textAlign="center"  fontSize="12" fontWeight="bold"  />
@@ -263,7 +285,9 @@
 		<mx:Button id="calbtn" x="10" y="4" width="150" fillAlphas="[1.0, 1.0, 1.0, 1.0]" click="selectView_Click(event)" fontSize="12" fontWeight="bold" />
 		<mx:Button id="upbtn" x="170" y="4" width="60" fillAlphas="[1.0, 1.0, 1.0, 1.0]" click="up_click(event)" label="△"/>
 		<mx:Button id="downbtn" x="230" y="4" width="60" fillAlphas="[1.0, 1.0, 1.0, 1.0]" click="down_click(event)" label="▽" />
+		<!--</mx:ViewStack>-->
 	</mx:Canvas>
+	
 	
 	<mx:Panel x="0" y="200" width="300" visible="false" includeInLayout="false">
 		<mx:Label id="calText" width="100%"/>
