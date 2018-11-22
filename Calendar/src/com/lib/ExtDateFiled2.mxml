@@ -5,14 +5,17 @@
 		<![CDATA[
 			import com.lib.ExtDateChooser3;
 			
-			import mx.core.mx_internal;
+			//import mx.core.mx_internal;
 			import mx.events.DropdownEvent;
 			import mx.events.FlexEvent;
-			import mx.managers.PopUpManager;
+			//import mx.managers.PopUpManager;
+			
+			private var tDate:Date = new Date();
 			
 			protected function creationCompleteHandler(event:FlexEvent):void
 			{
-				//dropdownFactory = new ClassFactory(ExtDateChooser3);
+				if(selectedDate == null)
+					selectedDate = tDate;				
 			}
 			
 			
@@ -24,16 +27,11 @@
 			
 			protected function openHandler(event:DropdownEvent):void
 			{
-				
-				//this.dropdown.visible = false;
-				//this.dropdown.includeInLayout = false;
 			}
 			
 			
 			protected function closeHandler(event:DropdownEvent):void
 			{	
-				//this.dropdown.visible = false;
-				//this.dropdown.includeInLayout = false;
 			}
 			
 		]]>
