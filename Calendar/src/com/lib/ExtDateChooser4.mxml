@@ -406,7 +406,9 @@
 					yearYN = false;
 					monthYN = false;
 				} else if(CalLevel == 2){
+					
 					this.mx_internal::dateGrid.visible = false;
+					//this.mx_internal:dataGrid = new;
 					
 					monthCal.visible = true;
 					monthCal.includeInLayout = true;
