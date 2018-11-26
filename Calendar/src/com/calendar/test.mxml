@@ -35,6 +35,7 @@
 		<lib:ExtAsDatechooser>
 			
 		</lib:ExtAsDatechooser>
+		
 		<mx:DateChooser/>
 		
 		<mx:Button id="testBtn2" click="clickHandler(event)" label="테스트" />
