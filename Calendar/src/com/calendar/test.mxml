@@ -26,11 +26,17 @@
 		<lib:ExtDateFiled2 id="test3">
 			
 		</lib:ExtDateFiled2>
-		<!--<lib:ExtDateChooser3 />
-		<mx:Button id="testBtn" click="clickHandler(event)" label="테스트" />
-		<lib:ExtDateChooser2 id="test1" />
-		<mx:Label text="테스트!!!" />
-		-->
+		<lib:ExtDateChooser3 id="test6" width="200" height="150">
+			
+		</lib:ExtDateChooser3>
+		<lib:ExtDateChooser4 id="test7" width="250" height="190">
+			
+		</lib:ExtDateChooser4>
+		<lib:ExtAsDatechooser>
+			
+		</lib:ExtAsDatechooser>
+		<mx:DateChooser/>
+		
 		<mx:Button id="testBtn2" click="clickHandler(event)" label="테스트" />
 	</mx:HBox>
 	
