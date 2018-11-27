@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:DateField xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="creationCompleteHandler(event)" formatString="YYYY-MM-DD" open="openHandler(event)">
+<mx:DateField xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="creationCompleteHandler(event)" formatString="YYYY-MM-DD" >
 	<mx:Script>
 		<![CDATA[
-			import mx.events.DropdownEvent;
+			import com.lib.ExtDateChooser;
+			
+			import mx.core.mx_internal;
 			import mx.events.FlexEvent;
+			
+			private var tDate:Date = new Date();
 			
 			protected function creationCompleteHandler(event:FlexEvent):void
 			{
-				// TODO Auto-generated method stub
-				this.dropdown.visible = false;
-				this.dropdown.includeInLayout = false;
+				if(this.selectedDate == null)
+					this.selectedDate = tDate;
+				
 			}
 			
-			protected function openHandler(event:DropdownEvent):void
-			{
-				this.dropdown.visible = false;
-				this.dropdown.includeInLayout = false;
+			override protected function createChildren():void{
+				this.dropdownFactory = new ClassFactory(ExtDateChooser);
+				//this.dropdown.setStyle("fontWeight","bold");
+				//this.dropdown.setStyle("fontSize","10");
+				super.createChildren();
 			}
+			
 			
 		]]>
 	</mx:Script>

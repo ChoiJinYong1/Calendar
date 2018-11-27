@@ -1,10 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:DateChooser xmlns:mx="http://www.adobe.com/2006/mxml" dayNames="['일','월','화','수','목','금','토']" fontWeight="bold" fontSize="12" >
+<mx:DateChooser xmlns:mx="http://www.adobe.com/2006/mxml"  width="250" height="190" fontSize="10" fontWeight="bold"
+				creationComplete="creationCompleteHandler(event)" show="onShow(event)" removed="removedHandler(event)" hide="hideHandler(event)">
 	<mx:Script>
 		<![CDATA[
-			import mx.core.UIComponentGlobals;
+			import mx.collections.ArrayCollection;
+			import mx.containers.HBox;
+			import mx.containers.VBox;
+			import mx.controls.Button;
 			import mx.core.UITextField;
 			import mx.core.mx_internal;
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+			public var CalLevel:int;
+			private var tDate:Date = new Date();
+			[Bindable] private var yearArray:ArrayCollection = new ArrayCollection();
+			[Bindable] private var dayYN:Boolean = false;
+			[Bindable] private var monthYN:Boolean = false;
+			[Bindable] private var yearYN:Boolean = false;
+			private var stdYear:String = "";
+			
+			
+			private var calbtn:Button = new Button;
+			private var upbtn:Button = new Button;
+			private var downbtn:Button = new Button;
+			private var monthCal:VBox = new VBox;
+			private var monthH1:HBox = new HBox;
+			private var monthH2:HBox = new HBox;
+			private var monthH3:HBox = new HBox;
+			private var month1:ExtLabel = new ExtLabel;
+			private var month2:ExtLabel = new ExtLabel;
+			private var month3:ExtLabel = new ExtLabel;
+			private var month4:ExtLabel = new ExtLabel;
+			private var month5:ExtLabel = new ExtLabel;
+			private var month6:ExtLabel = new ExtLabel;
+			private var month7:ExtLabel = new ExtLabel;
+			private var month8:ExtLabel = new ExtLabel;
+			private var month9:ExtLabel = new ExtLabel;
+			private var month10:ExtLabel = new ExtLabel;
+			private var month11:ExtLabel = new ExtLabel;
+			private var month12:ExtLabel = new ExtLabel;
+			
+			
+			private var yearCal:VBox = new VBox;
+			private var yearH1:HBox = new HBox;
+			private var yearH2:HBox = new HBox;
+			private var yearH3:HBox = new HBox;
+			private var year0:ExtLabel = new ExtLabel;
+			private var year1:ExtLabel = new ExtLabel;
+			private var year2:ExtLabel = new ExtLabel;
+			private var year3:ExtLabel = new ExtLabel;
+			private var year4:ExtLabel = new ExtLabel;
+			private var year5:ExtLabel = new ExtLabel;
+			private var year6:ExtLabel = new ExtLabel;
+			private var year7:ExtLabel = new ExtLabel;
+			private var year8:ExtLabel = new ExtLabel;
+			private var year9:ExtLabel = new ExtLabel;
+			private var year10:ExtLabel = new ExtLabel;
+			private var year11:ExtLabel = new ExtLabel;
+			
+			
+			private var testbtn:Button = new Button;
 			
 			override protected function updateDisplayList(w:Number, h:Number):void
 			{
@@ -138,8 +193,307 @@
 				this.mx_internal::monthDisplay.visible = false;
 				this.mx_internal::yearDisplay.visible = false;
 				
+				
+				//displayObject();
 			}
 			
+			private function createBtnChild():void{
+				
+				PopUpManager.addPopUp(calbtn,this,false);
+				PopUpManager.bringToFront(calbtn);
+				PopUpManager.addPopUp(upbtn,this,false);
+				PopUpManager.bringToFront(upbtn);
+				PopUpManager.addPopUp(downbtn,this,false);
+				PopUpManager.bringToFront(downbtn);
+				calbtn.x = this.x + (this.width * 0.03); calbtn.y = this.y + (this.height * 0.02); calbtn.width=this.width * 0.6; calbtn.height = 25;//calbtn.height = this.height*0.13;
+				calbtn.setStyle("fontWeight","bold"); calbtn.setStyle("fontSize","10");	
+				upbtn.x = this.x + (this.width * 0.64); upbtn.y = this.y + (this.height * 0.02); upbtn.width=this.width * 0.16; upbtn.label = "△"; upbtn.height = 25;// upbtn.height = this.height*0.13;
+				upbtn.setStyle("fontWeight","bold"); upbtn.setStyle("fontSize","10");
+				downbtn.x = this.x + (this.width * 0.8); downbtn.y = this.y + (this.height * 0.02); downbtn.width=this.width * 0.16; downbtn.label = "▽"; downbtn.height = 25;// downbtn.height = this.height*0.13;
+				downbtn.setStyle("fontWeight","bold"); downbtn.setStyle("fontSize","10");
+				
+				calbtn.addEventListener(MouseEvent.CLICK,selectView_Click);
+				upbtn.addEventListener(MouseEvent.CLICK,up_click);
+				downbtn.addEventListener(MouseEvent.CLICK,down_click);		
+				
+			}
+			
+			private function createMonthChild():void{
+				
+				PopUpManager.addPopUp(monthCal,this,false);
+				
+				monthCal.addChild(monthH1);				
+				monthH1.addChild(month1);				monthH1.addChild(month2);
+				monthH1.addChild(month3);				monthH1.addChild(month4);
+				monthCal.addChild(monthH2);
+				monthH2.addChild(month5);				monthH2.addChild(month6);
+				monthH2.addChild(month7);				monthH2.addChild(month8);
+				monthCal.addChild(monthH3);
+				monthH3.addChild(month9);				monthH3.addChild(month10);
+				monthH3.addChild(month11);				monthH3.addChild(month12);
+				
+				
+				
+				monthCal.x = this.x + (this.width * 0.07); monthCal.y = this.y + (this.height*0.18); monthCal.width = this.width*0.86; monthCal.height = this.height; monthCal.visible = monthYN; monthCal.includeInLayout = monthYN; 
+				
+				monthH1.width = monthCal.width; monthH1.height = this.height * 0.25; monthH1.setStyle("verticalAlign", "middle"); monthH1.setStyle("horizontalAlign", "center");
+				monthH2.width = monthCal.width; monthH2.height = this.height * 0.25; monthH2.setStyle("verticalAlign", "middle"); monthH2.setStyle("horizontalAlign", "center");
+				monthH3.width = monthCal.width; monthH3.height = this.height * 0.25; monthH3.setStyle("verticalAlign", "middle"); monthH3.setStyle("horizontalAlign", "center");
+				month1.text = "1월"; month2.text = "2월"; month3.text = "3월"; month4.text = "4월";
+				month1.width = monthH1.width * 0.2; month2.width = monthH1.width * 0.2; month3.width = monthH1.width * 0.2; month4.width = monthH1.width * 0.2; 
+				month5.text = "5월"; month6.text = "6월"; month7.text = "7월"; month8.text = "8월";				
+				month5.width = monthH1.width * 0.2; month6.width = monthH1.width * 0.2; month7.width = monthH1.width * 0.2; month8.width = monthH1.width * 0.2; 
+				month9.text = "9월"; month10.text = "10월"; month11.text = "11월"; month12.text = "12월";
+				month9.width = monthH1.width * 0.2; month10.width = monthH1.width * 0.2; month11.width = monthH1.width * 0.2; month12.width = monthH1.width * 0.2; 
+				
+				
+				month1.addEventListener(MouseEvent.CLICK,month_Click);				month2.addEventListener(MouseEvent.CLICK,month_Click);
+				month3.addEventListener(MouseEvent.CLICK,month_Click);				month4.addEventListener(MouseEvent.CLICK,month_Click);
+				month5.addEventListener(MouseEvent.CLICK,month_Click);				month6.addEventListener(MouseEvent.CLICK,month_Click);
+				month7.addEventListener(MouseEvent.CLICK,month_Click);				month8.addEventListener(MouseEvent.CLICK,month_Click);
+				month9.addEventListener(MouseEvent.CLICK,month_Click);				month10.addEventListener(MouseEvent.CLICK,month_Click);
+				month11.addEventListener(MouseEvent.CLICK,month_Click);				month12.addEventListener(MouseEvent.CLICK,month_Click);				
+				
+			}
+			
+			
+			private function createYearChild():void{		
+				
+				
+				PopUpManager.addPopUp(yearCal,this,false);
+				yearCal.addChild(yearH1);				
+				yearH1.addChild(year0);				yearH1.addChild(year1);
+				yearH1.addChild(year2);				yearH1.addChild(year3);
+				yearCal.addChild(yearH2);
+				yearH2.addChild(year4);				yearH2.addChild(year5);
+				yearH2.addChild(year6);				yearH2.addChild(year7);
+				yearCal.addChild(yearH3);
+				yearH3.addChild(year8);				yearH3.addChild(year9);
+				yearH3.addChild(year10);			yearH3.addChild(year11);
+				
+				yearCal.x = this.x + (this.width * 0.07); yearCal.y = this.y + (this.height*0.18); yearCal.width = this.width*0.86; yearCal.height = this.height; yearCal.visible = yearYN; yearCal.includeInLayout = yearYN; 
+				yearH1.width = yearCal.width; yearH1.height = this.height * 0.25; yearH1.setStyle("verticalAlign", "middle"); yearH1.setStyle("horizontalAlign", "center");
+				yearH2.width = yearCal.width; yearH2.height = this.height * 0.25; yearH2.setStyle("verticalAlign", "middle"); yearH2.setStyle("horizontalAlign", "center");
+				yearH3.width = yearCal.width; yearH3.height = this.height * 0.25; yearH3.setStyle("verticalAlign", "middle"); yearH3.setStyle("horizontalAlign", "center");
+				
+				if(!yearArray)
+				{
+					year0.text = yearArray.getItemAt(0).data; year1.text = yearArray.getItemAt(1).data; year2.text = yearArray.getItemAt(2).data;
+					year3.text = yearArray.getItemAt(3).data; year4.text = yearArray.getItemAt(4).data; year5.text = yearArray.getItemAt(5).data;
+					year6.text = yearArray.getItemAt(6).data; year7.text = yearArray.getItemAt(7).data; year8.text = yearArray.getItemAt(8).data;
+					year9.text = yearArray.getItemAt(9).data; year10.text = yearArray.getItemAt(10).data; year11.text = yearArray.getItemAt(11).data;
+					
+					
+					year0.width = yearH1.width * 0.2; year1.width = yearH1.width * 0.2; year2.width = yearH1.width * 0.2; year3.width = yearH1.width * 0.2; 
+					year4.width = yearH1.width * 0.2; year5.width = yearH1.width * 0.2; year6.width = yearH1.width * 0.2; year7.width = yearH1.width * 0.2; 
+					year8.width = yearH1.width * 0.2; year9.width = yearH1.width * 0.2; year10.width = yearH1.width * 0.2; year11.width = yearH1.width * 0.2; 
+				}
+				
+				year1.addEventListener(MouseEvent.CLICK,year_Click);				year2.addEventListener(MouseEvent.CLICK,year_Click);
+				year3.addEventListener(MouseEvent.CLICK,year_Click);				year4.addEventListener(MouseEvent.CLICK,year_Click);
+				year5.addEventListener(MouseEvent.CLICK,year_Click);				year6.addEventListener(MouseEvent.CLICK,year_Click);
+				year7.addEventListener(MouseEvent.CLICK,year_Click);				year8.addEventListener(MouseEvent.CLICK,year_Click);
+				year9.addEventListener(MouseEvent.CLICK,year_Click);				year10.addEventListener(MouseEvent.CLICK,year_Click);
+				year11.addEventListener(MouseEvent.CLICK,year_Click);				year0.addEventListener(MouseEvent.CLICK,year_Click);	
+				
+			}
+			
+			protected function year_Click(event:MouseEvent):void
+			{	
+				var tempDate:Date = this.selectedDate;
+				tempDate.setFullYear(int(event.currentTarget.text.replace("년","")));
+				this.selectedDate = tempDate;
+				CalLevel = 1;
+				selectView_Click(event);
+			}
+			
+			protected function month_Click(event:MouseEvent):void
+			{	
+				var tempDate:Date = this.selectedDate;
+				
+				tempDate.setMonth(int(event.currentTarget.text.replace("월","")-1));
+				this.selectedDate = tempDate;
+				
+				CalLevel = 3;
+				selectView_Click(event);
+			}
+			
+			protected function down_click(event:MouseEvent):void
+			{
+				
+				if(CalLevel == 1){					
+					this.selectedDate = DateUtils.dateAdd(DateUtils.MONTH,-1,this.selectedDate);
+				} else if(CalLevel == 2){
+					this.selectedDate = DateUtils.dateAdd(DateUtils.YEAR,-1,this.selectedDate);
+				} else if(CalLevel == 3){
+					this.mx_internal::dateGrid.visible = false;
+					yearYN = true;
+					monthYN = false;
+					this.selectedDate = DateUtils.dateAdd(DateUtils.YEAR,-10,this.selectedDate);
+					year_setting();
+				}
+				calbtn_change();
+			}
+			
+			protected function up_click(event:MouseEvent):void
+			{
+				if(CalLevel == 1){					
+					this.selectedDate = DateUtils.dateAdd(DateUtils.MONTH,1,this.selectedDate);
+				} else if(CalLevel == 2){
+					this.selectedDate = DateUtils.dateAdd(DateUtils.YEAR,1,this.selectedDate);
+				} else if(CalLevel == 3){
+					this.mx_internal::dateGrid.visible = false;
+					yearYN = true;
+					monthYN = false;
+					this.selectedDate = DateUtils.dateAdd(DateUtils.YEAR,10,this.selectedDate);
+					year_setting();
+				}
+				calbtn_change();
+			}
+			
+			
+			private function year_setting():void
+			{
+				var yDate:Date = new Date();
+				yDate.setFullYear(int(this.selectedDate.fullYear.toString().substr(0,3) + "0"));
+				
+				DateUtils.dateAdd("year",1,yDate);
+				stdYear = "";
+				yearArray = new ArrayCollection();
+				for (var ii:int = 0 ; ii <12 ; ii ++){
+					if(ii==0){ 
+						stdYear += DateUtils.dateAdd(DateUtils.YEAR,ii,yDate).fullYear.toString() ;
+					}
+					if(ii==11){
+						stdYear += "~" + DateUtils.dateAdd(DateUtils.YEAR,ii,yDate).fullYear.toString() ;
+					}
+					
+					yearArray.addItem({id:ii,data:DateUtils.dateAdd(DateUtils.YEAR,ii,yDate).fullYear});
+				}
+				if(yearArray.length != 0)
+				{
+					year0.text = yearArray.getItemAt(0).data; year1.text = yearArray.getItemAt(1).data; year2.text = yearArray.getItemAt(2).data;
+					year3.text = yearArray.getItemAt(3).data; year4.text = yearArray.getItemAt(4).data; year5.text = yearArray.getItemAt(5).data;
+					year6.text = yearArray.getItemAt(6).data; year7.text = yearArray.getItemAt(7).data; year8.text = yearArray.getItemAt(8).data;
+					year9.text = yearArray.getItemAt(9).data; year10.text = yearArray.getItemAt(10).data; year11.text = yearArray.getItemAt(11).data;
+					
+					
+					year0.width = yearH1.width * 0.2; year1.width = yearH1.width * 0.2; year2.width = yearH1.width * 0.2; year3.width = yearH1.width * 0.2; 
+					year4.width = yearH1.width * 0.2; year5.width = yearH1.width * 0.2; year6.width = yearH1.width * 0.2; year7.width = yearH1.width * 0.2; 
+					year8.width = yearH1.width * 0.2; year9.width = yearH1.width * 0.2; year10.width = yearH1.width * 0.2; year11.width = yearH1.width * 0.2; 
+				}
+			}
+			
+			protected function selectView_Click(event:MouseEvent):void
+			{
+				CalLevel += 1;
+				if(CalLevel > 3) 
+					CalLevel = 1;
+				if(CalLevel == 1){					
+					this.mx_internal::dateGrid.visible = true;
+					
+					monthCal.visible = false;
+					monthCal.includeInLayout = false;
+					
+					yearCal.visible = false;
+					yearCal.includeInLayout = false;
+					
+					yearYN = false;
+					monthYN = false;
+				} else if(CalLevel == 2){
+					this.mx_internal::dateGrid.visible = false;
+					
+					monthCal.visible = true;
+					monthCal.includeInLayout = true;
+					
+					yearCal.visible = false;
+					yearCal.includeInLayout = false;
+					
+					monthYN = true;
+					yearYN = false;
+				} else if(CalLevel == 3){
+					this.mx_internal::dateGrid.visible = false;
+					
+					monthCal.visible = false;
+					monthCal.includeInLayout = false;
+					
+					yearCal.visible = true;
+					yearCal.includeInLayout = true;
+					
+					yearYN = true;
+					monthYN = false;
+				}
+				calbtn_change();
+				
+			}
+			
+			private function calbtn_change():void
+			{
+				if(CalLevel == 1){
+					calbtn.label = this.selectedDate.fullYear.toString() + "." + (this.selectedDate.month+1).toString() ; 
+				} else if(CalLevel == 2){
+					calbtn.label = this.selectedDate.fullYear.toString() ;
+				} else if(CalLevel == 3){
+					calbtn.label = stdYear;
+				}
+			}
+			
+			
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				if(this.selectedDate == null)
+					this.selectedDate = tDate;
+				
+				ExternalInterface.call("console.log", this.getStyle("fontWeight") );
+				ExternalInterface.call("console.log", this.getStyle("fontSize") );
+				this.setStyle("fontWeight",this.getStyle("fontWeight"));
+				this.setStyle("fontSize",this.getStyle("fontSize"));
+				CalLevel = 1 ; // Level1:일달력 , Level2:월달력, Level3:년달력
+				dayYN = true;
+				addPopup();
+				year_setting();
+				calbtn_change();
+			}
+			
+			
+			protected function onShow(event:FlexEvent):void{
+				addPopup();
+				calbtn_change();
+			}
+			
+			private function addPopup():void{
+				
+				createBtnChild();
+				createMonthChild();
+				createYearChild();
+			}
+			
+			private function removePopup():void{
+				PopUpManager.removePopUp(calbtn);
+				PopUpManager.removePopUp(upbtn);
+				PopUpManager.removePopUp(downbtn);
+				PopUpManager.removePopUp(monthCal);
+				PopUpManager.removePopUp(yearCal);
+			}
+			
+			protected function removedHandler(event:Event):void
+			{
+				if(!this.visible)
+					removePopup();
+			}
+			
+			
+			
+			protected function hideHandler(event:FlexEvent):void
+			{
+				CalLevel = 1;
+				this.mx_internal::dateGrid.visible = true;
+				yearYN = false;
+				monthYN = false;
+				calbtn_change();
+				if(!this.visible)
+					removePopup();
+			}
 			
 		]]>
 	</mx:Script>
